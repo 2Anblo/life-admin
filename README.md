@@ -2,7 +2,7 @@
 
 LifeAdmin is a proposed stateful agent for simulated personal document and bill management. It will retrieve evidence, track state, plan actions, validate consequential actions, and verify outcomes.
 
-The first benchmark fixture, a small deterministic simulator, and its independent checker are implemented. The LifeAdmin agent, other benchmark tasks, and comparative evaluation are not implemented yet.
+The first benchmark fixture, a small deterministic simulator, an independent checker, and an initial model tool-call loop are implemented. Other benchmark tasks and comparative evaluation are not implemented yet.
 
 ## Planned components
 
@@ -22,7 +22,7 @@ The simulator and checkers should remain usable without importing the LifeAdmin 
 3. Complete for this fixture: deposits before scheduled payments on the same date, plus an independent final-state checker.
 4. Complete: successful and failing task paths covered by focused tests.
 
-The current simulator only supports deposit events and bill payments. It does not yet support subscription tools, conflicting notices, user authorization, late-fee accounting, or an LLM agent.
+The current simulator only supports deposit events and bill payments. It does not yet support subscription tools, conflicting notices, user authorization, or late-fee accounting. The agent loop has not been tested against a live Tinker model yet.
 
 See [docs/design.md](docs/design.md) for the proposed behavior and open decisions.
 
@@ -41,3 +41,15 @@ uv run python -m unittest discover -s tests -v
 ```
 
 This demonstration uses a hard-coded payment schedule; it does not run an autonomous agent. There is no full benchmark command yet.
+
+## Run the first task with a model
+
+The agent runner uses Tinker's Anthropic-compatible endpoint. Set the key and a model available to your Tinker account in your local PowerShell session:
+
+```powershell
+$env:TINKER_API_KEY = "your-key"
+$env:TINKER_MODEL = "your-available-model"
+uv run python run_agent.py
+```
+
+Keep API keys out of the repository. The runner prints each tool call and result, advances the simulator to the task horizon, then uses the independent checker to score the final state. The model sees document IDs and tool results, but not the task's hidden event list or checker.
