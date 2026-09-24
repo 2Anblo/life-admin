@@ -28,25 +28,16 @@ See [docs/design.md](docs/design.md) for the proposed behavior and open decision
 
 ## Development setup
 
-Python 3.11 or newer is recommended. From the repository root:
+Python 3.11 or newer is required. With `uv` installed, run from the repository root:
 
 ```powershell
-python -m venv .venv
-.venv\Scripts\Activate.ps1
-python -m pip install -e .
+uv run python run_first_task.py
 ```
 
 Run the first task checks with:
 
 ```powershell
-python -m unittest discover -s tests -v
-```
-
-Run a fixed example schedule for the first task with:
-
-```powershell
-python -m pip install -e .
-python run_first_task.py
+uv run python -m unittest discover -s tests -v
 ```
 
 This demonstration uses a hard-coded payment schedule; it does not run an autonomous agent. There is no full benchmark command yet.
