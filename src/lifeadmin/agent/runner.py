@@ -11,7 +11,10 @@ You may stop once the obligations are settled. Future events are only revealed b
 """
 
 
-def run_agent(client, model: str, task: dict, workspace: Workspace, max_steps: int = 20) -> dict:
+def run_agent(
+    client, model: str, task: dict, workspace: Workspace, max_steps: int = 20,
+    trace: list | None = None, api_calls: list | None = None,
+) -> dict:
     document_ids = list(workspace.documents)
     bill_ids = {bill["id"]: bill["document_id"] for bill in workspace.bills.values()}
     messages = [{
@@ -23,7 +26,10 @@ def run_agent(client, model: str, task: dict, workspace: Workspace, max_steps: i
             "Use read_document to inspect evidence, then choose and verify actions."
         ),
     }]
-    trace = []
+    if trace is None:
+        trace = []
+    if api_calls is None:
+        api_calls = []
 
     for _ in range(max_steps):
         response = client.messages.create(
@@ -33,6 +39,12 @@ def run_agent(client, model: str, task: dict, workspace: Workspace, max_steps: i
             tools=TOOLS,
             messages=messages,
         )
+        usage = getattr(response, "usage", None)
+        api_calls.append({
+            "stop_reason": response.stop_reason,
+            "input_tokens": getattr(usage, "input_tokens", None),
+            "output_tokens": getattr(usage, "output_tokens", None),
+        })
         print(f"API response received: {response.stop_reason}", flush=True)
         messages.append({"role": "assistant", "content": response.content})
         if response.stop_reason != "tool_use":
@@ -44,9 +56,11 @@ def run_agent(client, model: str, task: dict, workspace: Workspace, max_steps: i
             if block.type != "tool_use":
                 continue
             print(f"Tool call: {block.name}({block.input})", flush=True)
+            call = {"tool": block.name, "input": block.input}
+            trace.append(call)
             output = execute_tool(workspace, block.name, block.input)
             print(f"Tool result: {output}", flush=True)
-            trace.append({"tool": block.name, "input": block.input, "output": output})
+            call["output"] = output
             tool_results.append({"type": "tool_result", "tool_use_id": block.id, "content": output})
         messages.append({"role": "user", "content": tool_results})
 

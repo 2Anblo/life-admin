@@ -53,3 +53,5 @@ uv run python run_agent.py
 ```
 
 Keep API keys out of the repository. The runner prints each tool call and result, advances the simulator to the task horizon, then uses the independent checker to score the final state. The model sees document IDs and tool results, but not the task's hidden event list or checker.
+
+Each attempt writes a JSON log to `results/runs/`, including failed attempts. Logs contain the model name, API token counts when available, tool calls and results, the final state, and the score. They do not contain the API key. The `results/` directory is ignored by Git.
