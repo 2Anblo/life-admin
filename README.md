@@ -22,7 +22,7 @@ The simulator and checkers should remain usable without importing the LifeAdmin 
 3. Complete for this fixture: deposits before scheduled payments on the same date, plus an independent final-state checker.
 4. Complete: successful and failing task paths covered by focused tests.
 
-The current simulator only supports deposit events and bill payments. It does not yet support subscription tools, conflicting notices, user authorization, or late-fee accounting. The agent loop has not been tested against a live Tinker model yet.
+The current simulator only supports deposit events and bill payments. It does not yet support subscription tools, conflicting notices, user authorization, or late-fee accounting. The agent loop has completed the first task in one live Tinker run; broader reliability has not been evaluated.
 
 See [docs/design.md](docs/design.md) for the proposed behavior and open decisions.
 
@@ -44,11 +44,13 @@ This demonstration uses a hard-coded payment schedule; it does not run an autono
 
 ## Run the first task with a model
 
-The agent runner uses Tinker's Anthropic-compatible endpoint. Set the key and a model available to your Tinker account in your local PowerShell session:
+The agent runner uses Tinker's Anthropic-compatible endpoint. Our default model for day-to-day development is `thinkingmachines/Inkling-Small`. Use the larger `thinkingmachines/Inkling` when investigating tasks that the small model repeatedly fails. For formal comparisons, record the exact model ID and use the same model and settings across the systems being compared.
+
+Set the key and model in your local PowerShell session:
 
 ```powershell
 $env:TINKER_API_KEY = "your-key"
-$env:TINKER_MODEL = "your-available-model"
+$env:TINKER_MODEL = "thinkingmachines/Inkling-Small"
 uv run python run_agent.py
 ```
 
