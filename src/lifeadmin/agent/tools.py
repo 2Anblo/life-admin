@@ -22,7 +22,7 @@ TOOLS = [
     },
     {
         "name": "schedule_payment",
-        "description": "Schedule a bill payment for a future date. Funds are checked when the payment executes.",
+        "description": "Schedule a bill payment for a future date. Use the bill ID (for example, electric), not the document ID (bill-electric). Funds are checked when the payment executes.",
         "input_schema": {
             "type": "object",
             "properties": {
@@ -34,7 +34,7 @@ TOOLS = [
     },
     {
         "name": "pay_bill",
-        "description": "Pay a bill immediately from the current balance.",
+        "description": "Pay a bill immediately from the current balance. Use the bill ID, not the document ID.",
         "input_schema": {
             "type": "object",
             "properties": {"bill_id": {"type": "string"}},
@@ -52,14 +52,19 @@ TOOLS = [
 def execute_tool(workspace: Workspace, name: str, arguments: dict) -> str:
     if name == "read_document":
         result = {"document_id": arguments["document_id"], "text": workspace.read_document(arguments["document_id"])}
+        matching_bill = next((bill for bill in workspace.bills.values() if bill["document_id"] == arguments["document_id"]), None)
+        if matching_bill:
+            result["bill_id"] = matching_bill["id"]
     elif name == "check_balance":
         result = {"date": workspace.today, "balance_cents": workspace.check_balance()}
     elif name == "schedule_payment":
-        workspace.schedule_payment(arguments["bill_id"], arguments["payment_date"])
-        result = {"scheduled": arguments["bill_id"], "date": arguments["payment_date"]}
+        bill_id = next((bill["id"] for bill in workspace.bills.values() if bill["document_id"] == arguments["bill_id"]), arguments["bill_id"])
+        workspace.schedule_payment(bill_id, arguments["payment_date"])
+        result = {"scheduled": bill_id, "date": arguments["payment_date"]}
     elif name == "pay_bill":
-        workspace.pay_bill(arguments["bill_id"])
-        result = {"paid": arguments["bill_id"], "date": workspace.today, "balance_cents": workspace.check_balance()}
+        bill_id = next((bill["id"] for bill in workspace.bills.values() if bill["document_id"] == arguments["bill_id"]), arguments["bill_id"])
+        workspace.pay_bill(bill_id)
+        result = {"paid": bill_id, "date": workspace.today, "balance_cents": workspace.check_balance()}
     elif name == "advance_time":
         workspace.advance_time()
         result = {"date": workspace.today, "balance_cents": workspace.check_balance(), "payments": workspace.payments}

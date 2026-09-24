@@ -13,11 +13,13 @@ You may stop once the obligations are settled. Future events are only revealed b
 
 def run_agent(client, model: str, task: dict, workspace: Workspace, max_steps: int = 20) -> dict:
     document_ids = list(workspace.documents)
+    bill_ids = {bill["id"]: bill["document_id"] for bill in workspace.bills.values()}
     messages = [{
         "role": "user",
         "content": (
             f"Task: {task['title']}\nGoal: {task['goal']}\n"
             f"Current date: {workspace.today}\nDocument IDs: {document_ids}\n"
+            f"Bill IDs and their document IDs: {bill_ids}\n"
             "Use read_document to inspect evidence, then choose and verify actions."
         ),
     }]
@@ -31,6 +33,7 @@ def run_agent(client, model: str, task: dict, workspace: Workspace, max_steps: i
             tools=TOOLS,
             messages=messages,
         )
+        print(f"API response received: {response.stop_reason}", flush=True)
         messages.append({"role": "assistant", "content": response.content})
         if response.stop_reason != "tool_use":
             final_text = "\n".join(block.text for block in response.content if block.type == "text")
@@ -40,7 +43,9 @@ def run_agent(client, model: str, task: dict, workspace: Workspace, max_steps: i
         for block in response.content:
             if block.type != "tool_use":
                 continue
+            print(f"Tool call: {block.name}({block.input})", flush=True)
             output = execute_tool(workspace, block.name, block.input)
+            print(f"Tool result: {output}", flush=True)
             trace.append({"tool": block.name, "input": block.input, "output": output})
             tool_results.append({"type": "tool_result", "tool_use_id": block.id, "content": output})
         messages.append({"role": "user", "content": tool_results})

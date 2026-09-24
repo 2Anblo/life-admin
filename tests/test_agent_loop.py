@@ -11,6 +11,7 @@ sys.path.insert(0, str(ROOT))
 
 from benchmark.checkers.bill_payment import check_success
 from lifeadmin.agent.runner import run_agent
+from lifeadmin.agent.tools import execute_tool
 from lifeadmin.simulator.workspace import Workspace
 
 
@@ -42,6 +43,16 @@ class FakeMessages:
 
 
 class AgentLoopTests(unittest.TestCase):
+    def test_document_id_for_bill_is_resolved_to_bill_id(self):
+        task = json.loads((ROOT / "benchmark/tasks/avoid_late_fees_01.json").read_text())
+        workspace = Workspace(task)
+
+        output = execute_tool(workspace, "schedule_payment", {
+            "bill_id": "bill-electric", "payment_date": "2026-09-25"
+        })
+
+        self.assertEqual(json.loads(output)["scheduled"], "electric")
+
     def test_tool_results_return_to_model_and_task_can_succeed(self):
         task = json.loads((ROOT / "benchmark/tasks/avoid_late_fees_01.json").read_text())
         workspace = Workspace(task)
