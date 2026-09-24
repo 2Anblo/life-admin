@@ -42,4 +42,11 @@ Run the first task checks with:
 python -m unittest discover -s tests -v
 ```
 
-There is no runnable agent or full benchmark command yet.
+Run a fixed example schedule for the first task with:
+
+```powershell
+python -m pip install -e .
+python run_first_task.py
+```
+
+This demonstration uses a hard-coded payment schedule; it does not run an autonomous agent. There is no full benchmark command yet.
