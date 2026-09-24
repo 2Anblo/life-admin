@@ -10,7 +10,7 @@ from benchmark.checkers.bill_payment import check_success
 from lifeadmin.simulator.workspace import Workspace
 
 
-TASK_PATH = Path(__file__).parent / "benchmark/tasks/avoid_late_fees_01.json"
+TASK_PATH = Path(__file__).parent / "benchmark/tasks/avoid_late_fees.json"
 
 
 def main() -> None:

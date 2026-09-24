@@ -44,7 +44,7 @@ class FakeMessages:
 
 class AgentLoopTests(unittest.TestCase):
     def test_document_id_for_bill_is_resolved_to_bill_id(self):
-        task = json.loads((ROOT / "benchmark/tasks/avoid_late_fees_01.json").read_text())
+        task = json.loads((ROOT / "benchmark/tasks/avoid_late_fees.json").read_text())
         workspace = Workspace(task)
 
         output = execute_tool(workspace, "schedule_payment", {
@@ -54,7 +54,7 @@ class AgentLoopTests(unittest.TestCase):
         self.assertEqual(json.loads(output)["scheduled"], "electric")
 
     def test_tool_results_return_to_model_and_task_can_succeed(self):
-        task = json.loads((ROOT / "benchmark/tasks/avoid_late_fees_01.json").read_text())
+        task = json.loads((ROOT / "benchmark/tasks/avoid_late_fees.json").read_text())
         workspace = Workspace(task)
         messages = FakeMessages()
         client = SimpleNamespace(messages=messages)

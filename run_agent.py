@@ -13,7 +13,7 @@ from lifeadmin.agent.runner import run_agent
 from lifeadmin.simulator.workspace import Workspace
 
 
-TASK_PATH = Path(__file__).parent / "benchmark/tasks/avoid_late_fees_01.json"
+TASK_PATH = Path(__file__).parent / "benchmark/tasks/avoid_late_fees.json"
 TINKER_BASE_URL = "https://tinker.thinkingmachines.dev/services/tinker-prod/anthropic/api"
 RUNS_DIR = Path(__file__).parent / "results/runs"
 

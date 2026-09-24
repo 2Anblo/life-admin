@@ -12,9 +12,9 @@ from benchmark.checkers.bill_payment import check_success
 from lifeadmin.simulator.workspace import Workspace
 
 
-class FirstTaskTests(unittest.TestCase):
+class AvoidLateFeesTests(unittest.TestCase):
     def setUp(self):
-        self.task = json.loads((ROOT / "benchmark/tasks/avoid_late_fees_01.json").read_text())
+        self.task = json.loads((ROOT / "benchmark/tasks/avoid_late_fees.json").read_text())
         self.workspace = Workspace(self.task)
 
     def test_successful_schedule(self):

@@ -31,7 +31,7 @@ See [docs/design.md](docs/design.md) for the proposed behavior and open decision
 Python 3.11 or newer is required. With `uv` installed, run from the repository root:
 
 ```powershell
-uv run python run_first_task.py
+uv run python run_avoid_late_fees.py
 ```
 
 Run the first task checks with:
