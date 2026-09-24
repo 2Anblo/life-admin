@@ -2,7 +2,7 @@
 
 LifeAdmin is a proposed stateful agent for simulated personal document and bill management. It will retrieve evidence, track state, plan actions, validate consequential actions, and verify outcomes.
 
-This repository is an initial project scaffold. The simulator, agent, benchmark tasks, checkers, and evaluation results are not implemented yet.
+The first benchmark fixture, a small deterministic simulator, and its independent checker are implemented. The LifeAdmin agent, other benchmark tasks, and comparative evaluation are not implemented yet.
 
 ## Planned components
 
@@ -15,12 +15,14 @@ This repository is an initial project scaffold. The simulator, agent, benchmark 
 
 The simulator and checkers should remain usable without importing the LifeAdmin agent. Interactive systems will share a common tool interface and evaluation budget.
 
-## First milestone
+## First milestone status
 
-1. Define the JSON format for one complete bill-payment task.
-2. Implement state loading, `read_document`, `check_balance`, `schedule_payment`, `pay_bill`, and `advance_time`.
-3. Implement deterministic event ordering and one independent success checker.
-4. Run the first task end-to-end before expanding to 20 distinct tasks.
+1. Complete: JSON fixture for one bill-payment task.
+2. Complete for this fixture: state loading, `read_document`, `check_balance`, `schedule_payment`, `pay_bill`, and `advance_time`.
+3. Complete for this fixture: deposits before scheduled payments on the same date, plus an independent final-state checker.
+4. Complete: successful and failing task paths covered by focused tests.
+
+The current simulator only supports deposit events and bill payments. It does not yet support subscription tools, conflicting notices, user authorization, late-fee accounting, or an LLM agent.
 
 See [docs/design.md](docs/design.md) for the proposed behavior and open decisions.
 
@@ -34,4 +36,10 @@ python -m venv .venv
 python -m pip install -e .
 ```
 
-No runnable agent or benchmark command is provided yet.
+Run the first task checks with:
+
+```powershell
+python -m unittest discover -s tests -v
+```
+
+There is no runnable agent or full benchmark command yet.

@@ -1,0 +1,22 @@
+{
+  "id": "avoid_late_fees_01",
+  "title": "Pay three bills around an incoming deposit",
+  "start_date": "2026-09-24",
+  "horizon": "2026-09-28",
+  "initial_balance_cents": 12000,
+  "documents": [
+    {"id": "bill-electric", "text": "Electric bill: $60.00 due September 25, 2026."},
+    {"id": "bill-internet", "text": "Internet bill: $80.00 due September 27, 2026."},
+    {"id": "bill-water", "text": "Water bill: $50.00 due September 28, 2026."},
+    {"id": "deposit-notice", "text": "A $100.00 deposit will arrive September 26, 2026."}
+  ],
+  "bills": [
+    {"id": "electric", "amount_cents": 6000, "due_date": "2026-09-25", "document_id": "bill-electric"},
+    {"id": "internet", "amount_cents": 8000, "due_date": "2026-09-27", "document_id": "bill-internet"},
+    {"id": "water", "amount_cents": 5000, "due_date": "2026-09-28", "document_id": "bill-water"}
+  ],
+  "events": [
+    {"id": "paycheck", "date": "2026-09-26", "type": "deposit", "amount_cents": 10000}
+  ],
+  "goal": "Every bill settles by its due date, with no overdraft or duplicate payment."
+}
