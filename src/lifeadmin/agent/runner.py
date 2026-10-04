@@ -1,5 +1,7 @@
 """Minimal Anthropic-compatible client-tool loop."""
 
+import json
+
 from lifeadmin.agent.tools import TOOLS, execute_tool
 from lifeadmin.simulator.workspace import Workspace
 
@@ -58,10 +60,22 @@ def run_agent(
             print(f"Tool call: {block.name}({block.input})", flush=True)
             call = {"tool": block.name, "input": block.input}
             trace.append(call)
-            output = execute_tool(workspace, block.name, block.input)
+            try:
+                output = execute_tool(workspace, block.name, block.input)
+                is_error = False
+            except KeyError as error:
+                output = json.dumps({"error": f"Unknown ID or missing argument: {error}"})
+                is_error = True
+            except ValueError as error:
+                output = json.dumps({"error": str(error)})
+                is_error = True
             print(f"Tool result: {output}", flush=True)
             call["output"] = output
-            tool_results.append({"type": "tool_result", "tool_use_id": block.id, "content": output})
+            call["is_error"] = is_error
+            tool_results.append({
+                "type": "tool_result", "tool_use_id": block.id,
+                "content": output, "is_error": is_error,
+            })
         messages.append({"role": "user", "content": tool_results})
 
     return {"stop_reason": "max_steps", "final_text": "", "trace": trace}
