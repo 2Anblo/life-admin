@@ -4,7 +4,7 @@ from collections import Counter
 
 
 def check_success(task: dict, result: dict) -> bool:
-    if result["date"] < task["horizon"] or result["balance_cents"] < 0 or result["overdraft_count"]:
+    if result["date"] < task["horizon"] or result["balance_cents"] < 0 or result["failed_payments"]:
         return False
     payments = result["payments"]
     counts = Counter(payment["bill_id"] for payment in payments)

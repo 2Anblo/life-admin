@@ -67,7 +67,13 @@ def execute_tool(workspace: Workspace, name: str, arguments: dict) -> str:
         result = {"paid": bill_id, "date": workspace.today, "balance_cents": workspace.check_balance()}
     elif name == "advance_time":
         workspace.advance_time()
-        result = {"date": workspace.today, "balance_cents": workspace.check_balance(), "payments": workspace.payments}
+        result = {
+            "date": workspace.today,
+            "balance_cents": workspace.check_balance(),
+            "payments": workspace.payments,
+            "failed_payments": workspace.failed_payments,
+            "bill_status": workspace.bill_status,
+        }
     else:
         raise ValueError(f"Unknown tool: {name}")
     return json.dumps(result)
