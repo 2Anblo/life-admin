@@ -1,0 +1,208 @@
+{
+ "schema_version": 2,
+ "id": "conflicting_notices",
+ "title": "October payments",
+ "instruction": "Money is tight until my next paycheck. Please make sure my October rent, my October car-loan payment and my tuition installment are each paid in full by their deadlines, so that I pay no late fees. Don't pay any of them twice, don't overdraw my checking account, and don't let any payment bounce: my bank charges $25 when a scheduled payment runs without enough money in the account. Everything I have received about these payments is in my documents.",
+ "start_date": "2026-09-28",
+ "horizon": "2026-10-15",
+ "initial_balance_cents": 300000,
+ "display_order": [
+  "d-3m8x",
+  "d-8r5c",
+  "d-9t4h",
+  "d-7b1n",
+  "d-2w6f",
+  "d-5k2q"
+ ],
+ "documents": [
+  {
+   "id": "d-3m8x",
+   "title": "Resident portal reminder",
+   "text": "Maple Court resident portal - automated payment reminder\nSent: September 28, 2026\nTo: Jordan Lee, Unit 4B\nYour October 2026 rent of $1,400.00 is due October 1, 2026. Rent not received by October 3, 2026 is charged a $75.00 late fee.\nThis reminder is generated automatically from the standard lease schedule. If you have an approved payment arrangement for this month, follow the arrangement and disregard this reminder.",
+   "release_date": null
+  },
+  {
+   "id": "d-8r5c",
+   "title": "Payroll notice",
+   "text": "Brightline Logistics - payroll notice\nDate: September 25, 2026\nEmployee: Jordan Lee\nYour next paycheck of $2,000.00 (after taxes and deductions) will be deposited to your checking account on October 6, 2026. Direct-deposit funds are available by 9:00 a.m. on the deposit date.",
+   "release_date": null
+  },
+  {
+   "id": "d-9t4h",
+   "title": "Letter from Maple Court Apartments",
+   "text": "Maple Court Apartments - Management Office\nSeptember 24, 2026\nTo: Jordan Lee, Unit 4B\nRe: Approved payment arrangement for October 2026 rent\nAs discussed on September 23, we have approved a payment arrangement for your October 2026 rent. The due date for your October 2026 rent of $1,400.00 is moved from October 1 to October 8, 2026. No late fee will be charged for October 2026 if the full $1,400.00 is received by October 8, 2026. Please pay through the resident portal as usual.\nThis arrangement applies to October 2026 only. November 2026 rent is due on November 1 as normal.\nSigned: Dana Whitfield, Property Manager",
+   "release_date": null
+  },
+  {
+   "id": "d-7b1n",
+   "title": "Auto loan statement",
+   "text": "Prairie State Credit Union - auto loan statement\nStatement date: September 15, 2026\nBorrower: Jordan Lee. Loan account ending 2231.\nPayment due: $300.00 by October 3, 2026.\nA $15.00 late fee is charged if the payment is not received by October 3, 2026.",
+   "release_date": null
+  },
+  {
+   "id": "d-2w6f",
+   "title": "Tuition payment plan statement",
+   "text": "Lakeshore State University - Student Accounts\nFall 2026 payment plan statement. Statement date: September 10, 2026\nStudent: Jordan Lee. Student ID ending 4471.\nInstallment 2 of 4: $1,525.00 due October 2, 2026.\nA $50.00 late fee is charged if the installment is not received by October 2, 2026.",
+   "release_date": null
+  },
+  {
+   "id": "d-5k2q",
+   "title": "Residential lease (excerpt)",
+   "text": "RESIDENTIAL LEASE (EXCERPT)\nLandlord: Maple Court Apartments. Tenant: Jordan Lee. Premises: 1180 Maple Court, Unit 4B.\nTerm: September 1, 2026 to August 31, 2027.\nSection 3 (Rent): Monthly rent is $1,400.00, due on the 1st day of each month, paid through the Maple Court resident portal.\nSection 4 (Late fee): A late fee of $75.00 is charged if the full month's rent is not received by the 3rd day of the month.\nSection 12 (Changes): Any change to the rent amount or due date must be in writing and signed by the property manager.\nSigned by both parties on August 14, 2026.",
+   "release_date": null
+  }
+ ],
+ "bills": [
+  {
+   "id": "r-4c1m",
+   "payee": "Maple Court Apartments",
+   "amount_cents": 140000,
+   "due_date": "2026-10-01",
+   "document_id": "d-3m8x"
+  },
+  {
+   "id": "r-8w3d",
+   "payee": "Lakeshore State University",
+   "amount_cents": 152500,
+   "due_date": "2026-10-02",
+   "document_id": "d-2w6f"
+  },
+  {
+   "id": "r-2k7p",
+   "payee": "Prairie State Credit Union",
+   "amount_cents": 30000,
+   "due_date": "2026-10-03",
+   "document_id": "d-7b1n"
+  }
+ ],
+ "events": [
+  {
+   "id": "e-6v9j",
+   "date": "2026-10-06",
+   "type": "deposit",
+   "amount_cents": 200000
+  }
+ ],
+ "hidden": {
+  "obligations": [
+   {
+    "id": "rent-2026-10",
+    "records": [
+     "r-4c1m"
+    ],
+    "amount_cents": 140000,
+    "due_date": "2026-10-08",
+    "must_pay": true
+   },
+   {
+    "id": "tuition-2026-10",
+    "records": [
+     "r-8w3d"
+    ],
+    "amount_cents": 152500,
+    "due_date": "2026-10-02",
+    "must_pay": true
+   },
+   {
+    "id": "car-loan-2026-10",
+    "records": [
+     "r-2k7p"
+    ],
+    "amount_cents": 30000,
+    "due_date": "2026-10-03",
+    "must_pay": true
+   }
+  ],
+  "checker": "benchmark.checkers.conflicting_notices:check",
+  "annotations": {
+   "valid_sources": {
+    "rent-2026-10": [
+     "d-9t4h"
+    ],
+    "tuition-2026-10": [
+     "d-2w6f"
+    ],
+    "car-loan-2026-10": [
+     "d-7b1n"
+    ]
+   },
+   "superseded_sources": [
+    "d-5k2q",
+    "d-3m8x"
+   ],
+   "late_fees_cents": {
+    "rent-2026-10": 7500,
+    "tuition-2026-10": 5000,
+    "car-loan-2026-10": 1500
+   }
+  },
+  "document_claims": [
+   {
+    "document_id": "d-3m8x",
+    "bill_id": "r-4c1m",
+    "issued": "2026-09-28",
+    "due_date": "2026-10-01",
+    "amount_cents": 140000
+   },
+   {
+    "document_id": "d-9t4h",
+    "bill_id": "r-4c1m",
+    "issued": "2026-09-24",
+    "due_date": "2026-10-08",
+    "amount_cents": 140000
+   },
+   {
+    "document_id": "d-5k2q",
+    "bill_id": "r-4c1m",
+    "issued": "2026-08-14",
+    "due_date": "2026-10-01",
+    "amount_cents": 140000
+   },
+   {
+    "document_id": "d-7b1n",
+    "bill_id": "r-2k7p",
+    "issued": "2026-09-15",
+    "due_date": "2026-10-03",
+    "amount_cents": 30000
+   },
+   {
+    "document_id": "d-2w6f",
+    "bill_id": "r-8w3d",
+    "issued": "2026-09-10",
+    "due_date": "2026-10-02",
+    "amount_cents": 152500
+   }
+  ],
+  "reference_plan": [
+   {
+    "tool": "pay_bill",
+    "args": {
+     "bill_id": "r-8w3d"
+    }
+   },
+   {
+    "tool": "pay_bill",
+    "args": {
+     "bill_id": "r-2k7p"
+    }
+   },
+   {
+    "tool": "schedule_payment",
+    "args": {
+     "bill_id": "r-4c1m",
+     "payment_date": "2026-10-06"
+    }
+   }
+  ],
+  "floor_expected": {
+   "P0_noop": "fail",
+   "P1_last_allowed_date": "fail",
+   "P2_greedy": "fail",
+   "P3_pay_all_now": "fail",
+   "P4_newest_document": "fail",
+   "P5_oldest_document": "fail",
+   "P6_open_loop": "pass"
+  },
+  "floor_notes": "P6 replays the reference plan without interaction and passes: the task is static (all evidence at the start), so it tests evidence precedence, not reaction to new information."
+ }
+}

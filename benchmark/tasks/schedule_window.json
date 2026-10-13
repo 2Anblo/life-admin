@@ -1,0 +1,139 @@
+{
+ "schema_version": 2,
+ "id": "schedule_window",
+ "title": "Tuition installment and October rent",
+ "instruction": "My tuition installment is on the Student Accounts statement. Don't pay it before my financial-aid refund arrives (the date is on the aid notice); that refund is what pays it, and I need the money in checking until then. It must go out by October 25, because I register for spring classes on the 26th and want it paid before then. Set it up now so it goes out automatically; I won't be checking in. Also make sure October rent is paid on time.",
+ "start_date": "2026-10-13",
+ "horizon": "2026-10-31",
+ "initial_balance_cents": 240000,
+ "display_order": [
+  "doc-2c7a",
+  "doc-b95d",
+  "doc-8e41"
+ ],
+ "documents": [
+  {
+   "id": "doc-2c7a",
+   "title": "Financial aid refund notice",
+   "text": "OFFICE OF FINANCIAL AID - REFUND NOTICE\nNotice date: October 9, 2026\nYour fall 2026 financial aid refund of $1,500.00 has been approved. It will be deposited to your checking account by direct deposit on October 20, 2026.",
+   "release_date": null
+  },
+  {
+   "id": "doc-b95d",
+   "title": "October rent statement",
+   "text": "UNIT 4B - OCTOBER 2026 RENT STATEMENT\nAmount due: $950.00\nDue date: October 15, 2026\nA $75.00 late fee is charged on rent received after the due date.",
+   "release_date": null
+  },
+  {
+   "id": "doc-8e41",
+   "title": "Student Accounts payment plan statement",
+   "text": "STUDENT ACCOUNTS - FALL 2026 PAYMENT PLAN STATEMENT\nStatement date: October 6, 2026\nInstallment due: $1,200.00\nDue date: October 31, 2026\nPay by bank bill pay to Student Accounts. A $50.00 late fee is added to any installment received after its due date.",
+   "release_date": null
+  }
+ ],
+ "bills": [
+  {
+   "id": "rec-4f06",
+   "payee": "Unit 4B rent",
+   "amount_cents": 95000,
+   "due_date": "2026-10-15",
+   "document_id": "doc-b95d"
+  },
+  {
+   "id": "rec-d713",
+   "payee": "Student Accounts",
+   "amount_cents": 120000,
+   "due_date": "2026-10-31",
+   "document_id": "doc-8e41"
+  }
+ ],
+ "events": [
+  {
+   "id": "aid-refund",
+   "date": "2026-10-20",
+   "type": "deposit",
+   "amount_cents": 150000
+  }
+ ],
+ "hidden": {
+  "obligations": [
+   {
+    "id": "rent-october",
+    "records": [
+     "rec-4f06"
+    ],
+    "amount_cents": 95000,
+    "due_date": "2026-10-15",
+    "must_pay": true
+   },
+   {
+    "id": "tuition-installment",
+    "records": [
+     "rec-d713"
+    ],
+    "amount_cents": 120000,
+    "window_start": "2026-10-20",
+    "due_date": "2026-10-25",
+    "must_pay": true,
+    "must_schedule": true
+   }
+  ],
+  "checker": "benchmark.checkers.schedule_window:check",
+  "annotations": {
+   "valid_sources": {
+    "rent-october": [
+     "doc-b95d"
+    ],
+    "tuition-installment": [
+     "doc-8e41",
+     "doc-2c7a"
+    ]
+   },
+   "late_fees_cents": {
+    "rec-4f06": 7500,
+    "rec-d713": 5000
+   }
+  },
+  "document_claims": [
+   {
+    "document_id": "doc-b95d",
+    "bill_id": "rec-4f06",
+    "issued": "2026-10-01",
+    "due_date": "2026-10-15",
+    "amount_cents": 95000
+   },
+   {
+    "document_id": "doc-8e41",
+    "bill_id": "rec-d713",
+    "issued": "2026-10-06",
+    "due_date": "2026-10-31",
+    "amount_cents": 120000
+   }
+  ],
+  "reference_plan": [
+   {
+    "tool": "pay_bill",
+    "args": {
+     "bill_id": "rec-4f06"
+    }
+   },
+   {
+    "tool": "schedule_payment",
+    "args": {
+     "bill_id": "rec-d713",
+     "payment_date": "2026-10-21"
+    }
+   }
+  ],
+  "floor_expected": {
+   "P0_noop": "fail",
+   "P1_last_allowed_date": "fail",
+   "P2_greedy": "fail",
+   "P3_pay_all_now": "fail",
+   "P4_newest_document": "fail",
+   "P5_oldest_document": "fail",
+   "P6_open_loop": "pass"
+  },
+  "floor_notes": "P6 replays the reference plan without interaction and passes: the task is static, so it tests honoring a user-set window with an advance instruction, not reaction to new information."
+ }
+}

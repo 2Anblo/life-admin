@@ -1,0 +1,160 @@
+{
+ "schema_version": 2,
+ "id": "replace_schedule",
+ "title": "October internet bill",
+ "instruction": "Please handle this month's bill from Northline Internet. Last week I scheduled a payment for it in my bank's Bill Pay. Make sure the bill ends up paid exactly once, on time and for the correct amount, without overdrawing my account or bouncing a payment. You may cancel or replace that scheduled payment if it needs to change.",
+ "start_date": "2026-10-13",
+ "horizon": "2026-10-20",
+ "initial_balance_cents": 64000,
+ "display_order": [
+  "doc-8bwe",
+  "doc-5qhv",
+  "doc-2nzk"
+ ],
+ "documents": [
+  {
+   "id": "doc-5qhv",
+   "title": "Northline Internet: your statement",
+   "text": "Northline Internet\nMonthly statement\nStatement date: October 5, 2026\nPlan: Fiber 300\nService period: September 20 - October 19, 2026\n\nFiber 300 monthly service: $80.00\nAmount due: $80.00\nPayment due date: October 20, 2026\n\nPayments must be received by the due date. A $10.00 late fee applies to payments received after the due date.",
+   "release_date": null
+  },
+  {
+   "id": "doc-2nzk",
+   "title": "Bill Pay: payment scheduled",
+   "text": "Bill Pay - scheduled payment confirmation\nCreated: October 6, 2026\nPayee: Northline Internet\nAmount: $80.00\nPayment date: October 20, 2026\nPayment ID: sp-1006\n\nElectronic payments reach the payee on the payment date. A scheduled payment is sent on its payment date for the amount shown; it does not change if the payee later changes your bill. You can cancel a scheduled payment at any time before its payment date.",
+   "release_date": null
+  },
+  {
+   "id": "doc-8bwe",
+   "title": "Northline Internet: plan change",
+   "text": "Northline Internet\nPlan change confirmation\nDate: October 9, 2026\n\nYou changed your plan from Fiber 300 to Fiber 500. The change takes effect on October 15, 2026.\n\nBecause the change takes effect partway through your current service period, we will replace your October 5 statement. On October 15, 2026 we will issue a revised statement with your new amount due and your new payment due date. The new due date may be earlier than October 20.\n\nPlease pay the revised statement, not the October 5 statement.",
+   "release_date": null
+  },
+  {
+   "id": "doc-6tyd",
+   "title": "Payroll: direct deposit",
+   "text": "Brightwell Analytics payroll\nDirect deposit notice\nPay date: October 14, 2026\nNet pay deposited to your checking account: $1,850.00",
+   "release_date": "2026-10-14"
+  },
+  {
+   "id": "doc-3fja",
+   "title": "Northline Internet: your statement",
+   "text": "Northline Internet\nRevised monthly statement\nStatement date: October 15, 2026\nThis statement replaces your statement dated October 5, 2026.\nService period: September 20 - October 19, 2026\n\nFiber 300, September 20 - October 14 (25 days): $66.67\nFiber 500, October 15 - October 19 (5 days): $15.83\nAmount due: $82.50\nPayment due date: October 17, 2026\n\nYour billing cycle has changed with your new plan; future statements will be due on the 17th of each month. Payments must be received by the due date. A $10.00 late fee applies to payments received after the due date.",
+   "release_date": "2026-10-15"
+  }
+ ],
+ "bills": [
+  {
+   "id": "bp-48213",
+   "payee": "Northline Internet",
+   "amount_cents": 8000,
+   "due_date": "2026-10-20",
+   "document_id": "doc-5qhv"
+  }
+ ],
+ "events": [
+  {
+   "id": "ev-1",
+   "date": "2026-10-14",
+   "type": "deposit",
+   "amount_cents": 185000
+  },
+  {
+   "id": "ev-2",
+   "date": "2026-10-15",
+   "type": "update_bill",
+   "bill_id": "bp-48213",
+   "fields": {
+    "amount_cents": 8250,
+    "due_date": "2026-10-17",
+    "document_id": "doc-3fja"
+   }
+  }
+ ],
+ "initial_history": {
+  "payments": [],
+  "failed_payments": [],
+  "pending": [
+   {
+    "instruction_id": "sp-1006",
+    "bill_id": "bp-48213",
+    "date": "2026-10-20",
+    "amount_cents": 8000,
+    "created_on": "2026-10-06",
+    "origin": "seeded"
+   }
+  ]
+ },
+ "hidden": {
+  "obligations": [
+   {
+    "id": "northline-oct",
+    "records": [
+     "bp-48213"
+    ],
+    "amount_cents": 8250,
+    "due_date": "2026-10-17",
+    "must_pay": true
+   }
+  ],
+  "checker": "benchmark.checkers.replace_schedule:check",
+  "checker_params": {
+   "stale_instruction_ids": [
+    "sp-1006"
+   ],
+   "revision_date": "2026-10-15"
+  },
+  "annotations": {
+   "valid_sources": [
+    "doc-3fja",
+    "doc-8bwe",
+    "doc-2nzk"
+   ],
+   "superseded_sources": [
+    "doc-5qhv"
+   ],
+   "late_fee_cents": 1000
+  },
+  "document_claims": [
+   {
+    "document_id": "doc-5qhv",
+    "bill_id": "bp-48213",
+    "issued": "2026-10-05",
+    "due_date": "2026-10-20",
+    "amount_cents": 8000
+   }
+  ],
+  "reference_plan": [
+   {
+    "tool": "advance_time",
+    "args": {}
+   },
+   {
+    "tool": "advance_time",
+    "args": {}
+   },
+   {
+    "tool": "cancel_scheduled_payment",
+    "args": {
+     "instruction_id": "sp-1006"
+    }
+   },
+   {
+    "tool": "schedule_payment",
+    "args": {
+     "bill_id": "bp-48213",
+     "payment_date": "2026-10-16"
+    }
+   }
+  ],
+  "floor_expected": {
+   "P0_noop": "fail",
+   "P1_last_allowed_date": "fail",
+   "P2_greedy": "fail",
+   "P3_pay_all_now": "fail",
+   "P4_newest_document": "fail",
+   "P5_oldest_document": "fail",
+   "P6_open_loop": "fail"
+  }
+ }
+}
