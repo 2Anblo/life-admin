@@ -1,0 +1,288 @@
+{
+ "schema_version": 2,
+ "id": "batch_recovery",
+ "title": "October bills",
+ "instruction": "Some of the payments in yesterday's scheduled batch bounced. Get every bill from that batch paid in full before any late fee or lapse, without paying more than is owed on any bill and without another payment bouncing.",
+ "start_date": "2026-10-13",
+ "horizon": "2026-10-21",
+ "initial_balance_cents": 3500,
+ "display_order": [
+  "d-6083",
+  "d-8725",
+  "d-2954",
+  "d-3817",
+  "d-5402",
+  "d-1196",
+  "d-7630"
+ ],
+ "documents": [
+  {
+   "id": "d-3817",
+   "title": "Lakeview Power statement",
+   "text": "Lakeview Power - monthly statement. Account 4471-0932. Statement date: October 2, 2026. Service period: September 1-30, 2026. Amount due: $120.00. Due date: October 16, 2026. A $25.00 late fee is added to any amount not received by the due date.",
+   "release_date": null
+  },
+  {
+   "id": "d-5402",
+   "title": "Kestrel Mobile bill",
+   "text": "Kestrel Mobile - monthly bill. Account KM-30418. Bill date: October 3, 2026. Plan charges for October 3 - November 2, 2026. Amount due: $55.00. Due date: October 18, 2026.",
+   "release_date": null
+  },
+  {
+   "id": "d-1196",
+   "title": "Prairie Gas statement",
+   "text": "Prairie Gas - monthly statement. Account 88-30715. Statement date: September 30, 2026. Amount due: $15.00. Due date: October 14, 2026.",
+   "release_date": null
+  },
+  {
+   "id": "d-7630",
+   "title": "Harborline Insurance premium notice",
+   "text": "Harborline Insurance - renters policy premium notice. Notice date: September 28, 2026. Policy HR-208815. Coverage month: October 12 - November 11, 2026. Monthly premium: $40.00. Premium due: October 12, 2026.",
+   "release_date": null
+  },
+  {
+   "id": "d-2954",
+   "title": "Lakeview Power notice, October 12",
+   "text": "Lakeview Power - returned payment notice. Date: October 12, 2026. Account 4471-0932. Your bank returned your payment of $120.00 dated October 12, 2026 (reason: insufficient funds). The payment was not applied to your account, and the $120.00 balance is still due on October 16, 2026. A $25.00 late fee will be added if we have not received payment by the end of October 16. We do not resubmit returned payments.",
+   "release_date": null
+  },
+  {
+   "id": "d-6083",
+   "title": "Harborline Insurance notice, October 12",
+   "text": "Harborline Insurance - premium not received. Date: October 12, 2026. Policy HR-208815. Your bank returned your premium payment of $40.00 dated October 12, 2026 (reason: insufficient funds). Your coverage continues during a grace period. If we have not received $40.00 by the end of October 20, 2026, your policy will lapse. We do not resubmit returned payments.",
+   "release_date": null
+  },
+  {
+   "id": "d-8725",
+   "title": "Tallgrass Logistics payroll notice",
+   "text": "Tallgrass Logistics - payroll notice. Pay date: October 15, 2026. Net pay of $1,184.62 will be deposited to your checking account on the pay date.",
+   "release_date": null
+  }
+ ],
+ "bills": [
+  {
+   "id": "r-482",
+   "payee": "Lakeview Power",
+   "amount_cents": 12000,
+   "due_date": "2026-10-16",
+   "document_id": "d-3817"
+  },
+  {
+   "id": "r-157",
+   "payee": "Kestrel Mobile",
+   "amount_cents": 5500,
+   "due_date": "2026-10-18",
+   "document_id": "d-5402"
+  },
+  {
+   "id": "r-936",
+   "payee": "Prairie Gas",
+   "amount_cents": 1500,
+   "due_date": "2026-10-14",
+   "document_id": "d-1196"
+  },
+  {
+   "id": "r-713",
+   "payee": "Harborline Insurance",
+   "amount_cents": 4000,
+   "due_date": "2026-10-12",
+   "document_id": "d-7630"
+  }
+ ],
+ "events": [
+  {
+   "id": "ev-1",
+   "date": "2026-10-15",
+   "type": "deposit",
+   "amount_cents": 118462
+  }
+ ],
+ "initial_history": {
+  "payments": [
+   {
+    "payment_id": "pay-60218",
+    "bill_id": "r-157",
+    "amount_cents": 5500,
+    "date": "2026-10-12",
+    "created_on": "2026-10-05"
+   },
+   {
+    "payment_id": "pay-60219",
+    "bill_id": "r-936",
+    "amount_cents": 1500,
+    "date": "2026-10-12",
+    "created_on": "2026-10-05"
+   }
+  ],
+  "failed_payments": [
+   {
+    "bill_id": "r-482",
+    "amount_cents": 12000,
+    "date": "2026-10-12",
+    "reason": "insufficient_funds"
+   },
+   {
+    "bill_id": "r-713",
+    "amount_cents": 4000,
+    "date": "2026-10-12",
+    "reason": "insufficient_funds"
+   }
+  ],
+  "pending": []
+ },
+ "hidden": {
+  "obligations": [
+   {
+    "id": "electric-oct",
+    "records": [
+     "r-482"
+    ],
+    "amount_cents": 12000,
+    "due_date": "2026-10-16",
+    "must_pay": true
+   },
+   {
+    "id": "insurance-oct",
+    "records": [
+     "r-713"
+    ],
+    "amount_cents": 4000,
+    "due_date": "2026-10-20",
+    "must_pay": true
+   },
+   {
+    "id": "phone-oct",
+    "records": [
+     "r-157"
+    ],
+    "amount_cents": 5500,
+    "due_date": "2026-10-18",
+    "must_pay": true
+   },
+   {
+    "id": "gas-oct",
+    "records": [
+     "r-936"
+    ],
+    "amount_cents": 1500,
+    "due_date": "2026-10-14",
+    "must_pay": true
+   }
+  ],
+  "checker": "benchmark.checkers.batch_recovery:check",
+  "checker_params": {
+   "late_consequences": {
+    "electric-oct": {
+     "fee_cents": 2500
+    },
+    "insurance-oct": {
+     "lapse": true
+    }
+   }
+  },
+  "annotations": {
+   "valid_sources": {
+    "electric-oct": [
+     "d-3817",
+     "d-2954"
+    ],
+    "insurance-oct": [
+     "d-6083"
+    ],
+    "phone-oct": [
+     "d-5402"
+    ],
+    "gas-oct": [
+     "d-1196"
+    ],
+    "funds": [
+     "d-8725"
+    ]
+   },
+   "seeded_batch": {
+    "created_on": "2026-10-05",
+    "balance_before_cents": 10500,
+    "order": [
+     "r-482",
+     "r-157",
+     "r-936",
+     "r-713"
+    ]
+   }
+  },
+  "document_claims": [
+   {
+    "document_id": "d-3817",
+    "bill_id": "r-482",
+    "issued": "2026-10-02",
+    "due_date": "2026-10-16",
+    "amount_cents": 12000
+   },
+   {
+    "document_id": "d-2954",
+    "bill_id": "r-482",
+    "issued": "2026-10-12",
+    "due_date": "2026-10-16",
+    "amount_cents": 12000
+   },
+   {
+    "document_id": "d-5402",
+    "bill_id": "r-157",
+    "issued": "2026-10-03",
+    "due_date": "2026-10-18",
+    "amount_cents": 5500
+   },
+   {
+    "document_id": "d-1196",
+    "bill_id": "r-936",
+    "issued": "2026-09-30",
+    "due_date": "2026-10-14",
+    "amount_cents": 1500
+   },
+   {
+    "document_id": "d-7630",
+    "bill_id": "r-713",
+    "issued": "2026-09-28",
+    "due_date": "2026-10-12",
+    "amount_cents": 4000
+   },
+   {
+    "document_id": "d-6083",
+    "bill_id": "r-713",
+    "issued": "2026-10-12",
+    "due_date": "2026-10-20",
+    "amount_cents": 4000
+   }
+  ],
+  "reference_plan": [
+   {
+    "tool": "schedule_payment",
+    "args": {
+     "bill_id": "r-482",
+     "payment_date": "2026-10-15"
+    }
+   },
+   {
+    "tool": "schedule_payment",
+    "args": {
+     "bill_id": "r-713",
+     "payment_date": "2026-10-15"
+    }
+   },
+   {
+    "tool": "advance_time",
+    "args": {}
+   }
+  ],
+  "floor_expected": {
+   "P0_noop": "fail",
+   "P1_last_allowed_date": "fail",
+   "P2_greedy": "fail",
+   "P3_pay_all_now": "fail",
+   "P4_newest_document": "fail",
+   "P5_oldest_document": "fail",
+   "P6_open_loop": "pass"
+  },
+  "floor_notes": "P6 replays the reference plan's start-of-run steps and passes: the task is static, so it tests which records are still open, not reaction to new information."
+ }
+}
