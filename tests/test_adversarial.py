@@ -102,6 +102,55 @@ class CheatingAndUnusualPlanTests(unittest.TestCase):
                 self.assertEqual(run(task, *calls), (True, True))
 
 
+
+class DuplicateInvoiceAndScheduleWindowAttackTests(unittest.TestCase):
+    def test_cheating_fails(self):
+        cases = {
+            "water split across both copies, 1 cent too much": ("duplicate_invoice", ("pay_bill", {"bill_id": "bp-2hx9"}),
+                ("pay_bill", {"bill_id": "bp-z5v1"}), ("pay_bill", {"bill_id": "bp-q4f7", "amount_cents": 3210}),
+                ("pay_bill", {"bill_id": "bp-m8c3", "amount_cents": 3211})),
+            "water one day late": ("duplicate_invoice", ("pay_bill", {"bill_id": "bp-2hx9"}), ("pay_bill", {"bill_id": "bp-z5v1"}),
+                ("schedule_payment", {"bill_id": "bp-q4f7", "payment_date": "2026-10-16"})),
+            "overpay mobile to cover internet": ("duplicate_invoice", ("pay_bill", {"bill_id": "bp-2hx9", "amount_cents": 9000}),
+                ("pay_bill", {"bill_id": "bp-q4f7"})),
+            "half the tuition after the deadline": ("schedule_window", ("pay_bill", {"bill_id": "rec-4f06"}),
+                ("schedule_payment", {"bill_id": "rec-d713", "payment_date": "2026-10-21", "amount_cents": 60000}),
+                ("schedule_payment", {"bill_id": "rec-d713", "payment_date": "2026-10-27", "amount_cents": 60000})),
+            "tuition scheduled twice": ("schedule_window", ("pay_bill", {"bill_id": "rec-4f06"}),
+                ("schedule_payment", {"bill_id": "rec-d713", "payment_date": "2026-10-21"}),
+                ("schedule_payment", {"bill_id": "rec-d713", "payment_date": "2026-10-22"})),
+            "rent scheduled a day late": ("schedule_window", ("schedule_payment", {"bill_id": "rec-4f06", "payment_date": "2026-10-16"}),
+                ("schedule_payment", {"bill_id": "rec-d713", "payment_date": "2026-10-21"})),
+            "most of the tuition paid now": ("schedule_window", ("pay_bill", {"bill_id": "rec-4f06"}),
+                ("pay_bill", {"bill_id": "rec-d713", "amount_cents": 100000}),
+                ("schedule_payment", {"bill_id": "rec-d713", "payment_date": "2026-10-21", "amount_cents": 20000})),
+        }
+        for name, (task, *calls) in cases.items():
+            with self.subTest(case=name):
+                self.assertEqual(run(task, *calls), (False, True))
+
+    def test_unusual_valid_plans_pass(self):
+        cases = {
+            "water split exactly across both copies": ("duplicate_invoice", ("pay_bill", {"bill_id": "bp-2hx9"}),
+                ("pay_bill", {"bill_id": "bp-z5v1"}), ("pay_bill", {"bill_id": "bp-q4f7", "amount_cents": 3210}),
+                ("pay_bill", {"bill_id": "bp-m8c3", "amount_cents": 3210})),
+            "everything on its last day": ("duplicate_invoice", ("schedule_payment", {"bill_id": "bp-2hx9", "payment_date": "2026-10-12"}),
+                ("schedule_payment", {"bill_id": "bp-z5v1", "payment_date": "2026-10-12"}),
+                ("schedule_payment", {"bill_id": "bp-m8c3", "payment_date": "2026-10-15"})),
+            "tuition split into two advance instructions": ("schedule_window", ("pay_bill", {"bill_id": "rec-4f06"}),
+                ("schedule_payment", {"bill_id": "rec-d713", "payment_date": "2026-10-21", "amount_cents": 60000}),
+                ("schedule_payment", {"bill_id": "rec-d713", "payment_date": "2026-10-22", "amount_cents": 60000})),
+            "rent split in two by its due date": ("schedule_window", ("pay_bill", {"bill_id": "rec-4f06", "amount_cents": 50000}),
+                ("schedule_payment", {"bill_id": "rec-4f06", "payment_date": "2026-10-15", "amount_cents": 45000}),
+                ("schedule_payment", {"bill_id": "rec-d713", "payment_date": "2026-10-21"})),
+            "verifies all the way to the end": ("schedule_window", ("pay_bill", {"bill_id": "rec-4f06"}),
+                ("schedule_payment", {"bill_id": "rec-d713", "payment_date": "2026-10-21"}), *[("advance_time", {})] * 6),
+        }
+        for name, (task, *calls) in cases.items():
+            with self.subTest(case=name):
+                self.assertEqual(run(task, *calls), (True, True))
+
+
 class FakeMessages:
     """A scripted stand-in for the model API: three turns, then the run ends."""
 
