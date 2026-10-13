@@ -1,0 +1,180 @@
+{
+ "schema_version": 2,
+ "id": "duplicate_invoice",
+ "title": "Pay October bills",
+ "instruction": "Please pay the bills waiting in my bill-pay. Everything I owe should be paid in full by its due date, and nothing should be paid twice.",
+ "start_date": "2026-10-06",
+ "horizon": "2026-10-20",
+ "initial_balance_cents": 128456,
+ "display_order": [
+  "doc-w3n9",
+  "doc-5tqm",
+  "doc-r8k2",
+  "doc-h6zc"
+ ],
+ "documents": [
+  {
+   "id": "doc-r8k2",
+   "title": "eBill received in bill-pay on October 3, 2026",
+   "text": "eBill received in bill-pay on October 3, 2026\nPayee: City Water Utility (eBill)\nCustomer: Jordan Reyes\nAccount number: 40-1187-22\nService address: 77 Birch Lane, Apt 3\nInvoice: W-2291    Statement date: October 1, 2026\nService period: September 15 - September 30, 2026\nPrevious balance: $0.00\nWater (2,400 gal): $21.60\nSewer: $18.00\nBase charge (16 days): $9.60\nNew account setup fee: $15.00\nAmount due: $64.20    Due date: October 15, 2026\nPaperless billing for account 40-1187-22 began October 3, 2026: statements for this account now arrive here as eBills instead of by mail, and this eBill replaces the paper statement.",
+   "release_date": null
+  },
+  {
+   "id": "doc-5tqm",
+   "title": "eBill received in bill-pay on October 4, 2026",
+   "text": "eBill received in bill-pay on October 4, 2026\nPayee: Northline\nCustomer: Jordan Reyes\nAccount number: 7720-5531 (mobile line 217-555-0186)\nInvoice: NL-58817    Statement date: October 4, 2026\nMobile plan, October 4 - November 3, 2026: $40.00\nTaxes and fees: $5.00\nAmount due: $45.00    Due date: October 12, 2026",
+   "release_date": null
+  },
+  {
+   "id": "doc-w3n9",
+   "title": "Scanned mail, received October 5, 2026",
+   "text": "Scanned mail, received October 5, 2026\nCITY WATER UTILITY - STATEMENT\nCustomer: Jordan Reyes, 77 Birch Lane, Apt 3\nAccount number: 40-1187-22\nService address: 77 Birch Lane, Apt 3\nInvoice: W-2291    Statement date: October 1, 2026\nService period: September 15 - September 30, 2026\nPrevious balance: $0.00\nWater (2,400 gal): $21.60\nSewer: $18.00\nBase charge (16 days): $9.60\nNew account setup fee: $15.00\nAmount due: $64.20    Due date: October 15, 2026\nPay online, by mail, or in your bank's bill-pay (payee: City Water Utility, account 40-1187-22).",
+   "release_date": null
+  },
+  {
+   "id": "doc-h6zc",
+   "title": "Scanned mail, received October 6, 2026",
+   "text": "Scanned mail, received October 6, 2026\nNORTHLINE - HOME INTERNET STATEMENT\nCustomer: Jordan Reyes, 77 Birch Lane, Apt 3\nAccount number: 7720-9140 (home internet, 77 Birch Lane, Apt 3)\nInvoice: NL-58902    Statement date: October 4, 2026\nHome internet 300, October 4 - November 3, 2026: $42.00\nTaxes and fees: $3.00\nAmount due: $45.00    Due date: October 12, 2026\nGo paperless: enroll this account in eBills from your bank's bill-pay. Pay online, by mail, or in your bank's bill-pay (payee: Northline, account 7720-9140).",
+   "release_date": null
+  }
+ ],
+ "bills": [
+  {
+   "id": "bp-q4f7",
+   "payee": "City Water Utility",
+   "amount_cents": 6420,
+   "due_date": "2026-10-15",
+   "document_id": "doc-r8k2"
+  },
+  {
+   "id": "bp-2hx9",
+   "payee": "Northline",
+   "amount_cents": 4500,
+   "due_date": "2026-10-12",
+   "document_id": "doc-5tqm"
+  },
+  {
+   "id": "bp-m8c3",
+   "payee": "City Water Utility",
+   "amount_cents": 6420,
+   "due_date": "2026-10-15",
+   "document_id": "doc-w3n9"
+  },
+  {
+   "id": "bp-z5v1",
+   "payee": "Northline",
+   "amount_cents": 4500,
+   "due_date": "2026-10-12",
+   "document_id": "doc-h6zc"
+  }
+ ],
+ "events": [],
+ "hidden": {
+  "obligations": [
+   {
+    "id": "OB-W2291",
+    "records": [
+     "bp-q4f7",
+     "bp-m8c3"
+    ],
+    "amount_cents": 6420,
+    "due_date": "2026-10-15",
+    "must_pay": true
+   },
+   {
+    "id": "OB-NL5531",
+    "records": [
+     "bp-2hx9"
+    ],
+    "amount_cents": 4500,
+    "due_date": "2026-10-12",
+    "must_pay": true
+   },
+   {
+    "id": "OB-NL9140",
+    "records": [
+     "bp-z5v1"
+    ],
+    "amount_cents": 4500,
+    "due_date": "2026-10-12",
+    "must_pay": true
+   }
+  ],
+  "checker": "benchmark.checkers.duplicate_invoice:check",
+  "annotations": {
+   "valid_sources": {
+    "OB-W2291": [
+     "doc-r8k2",
+     "doc-w3n9"
+    ],
+    "OB-NL5531": [
+     "doc-5tqm"
+    ],
+    "OB-NL9140": [
+     "doc-h6zc"
+    ]
+   }
+  },
+  "document_claims": [
+   {
+    "document_id": "doc-r8k2",
+    "bill_id": "bp-q4f7",
+    "issued": "2026-10-03",
+    "due_date": "2026-10-15",
+    "amount_cents": 6420
+   },
+   {
+    "document_id": "doc-5tqm",
+    "bill_id": "bp-2hx9",
+    "issued": "2026-10-04",
+    "due_date": "2026-10-12",
+    "amount_cents": 4500
+   },
+   {
+    "document_id": "doc-w3n9",
+    "bill_id": "bp-m8c3",
+    "issued": "2026-10-05",
+    "due_date": "2026-10-15",
+    "amount_cents": 6420
+   },
+   {
+    "document_id": "doc-h6zc",
+    "bill_id": "bp-z5v1",
+    "issued": "2026-10-06",
+    "due_date": "2026-10-12",
+    "amount_cents": 4500
+   }
+  ],
+  "reference_plan": [
+   {
+    "tool": "pay_bill",
+    "args": {
+     "bill_id": "bp-2hx9"
+    }
+   },
+   {
+    "tool": "pay_bill",
+    "args": {
+     "bill_id": "bp-z5v1"
+    }
+   },
+   {
+    "tool": "schedule_payment",
+    "args": {
+     "bill_id": "bp-q4f7",
+     "payment_date": "2026-10-15"
+    }
+   }
+  ],
+  "floor_expected": {
+   "P0_noop": "fail",
+   "P1_last_allowed_date": "fail",
+   "P2_greedy": "fail",
+   "P3_pay_all_now": "fail",
+   "P4_newest_document": "fail",
+   "P5_oldest_document": "fail",
+   "P6_open_loop": "pass"
+  },
+  "floor_notes": "P6 replays the reference plan without interaction and passes: the task is static, so it tests which records are one obligation, not reaction to new information."
+ }
+}

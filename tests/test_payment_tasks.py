@@ -158,5 +158,77 @@ class BatchRecoveryTests(TaskTestCase):
         ])
 
 
+
+class DuplicateInvoiceTests(TaskTestCase):
+    task_id = "duplicate_invoice"
+    WATER_EBILL, WATER_PAPER, MOBILE, INTERNET = "bp-q4f7", "bp-m8c3", "bp-2hx9", "bp-z5v1"
+
+    def test_floor_policies(self):
+        self.check_floor_policies()
+
+    def test_traces(self):
+        oracle = [pay(self.MOBILE), pay(self.INTERNET), schedule(self.WATER_EBILL, "2026-10-15")]
+        self.expect([
+            ("O oracle", steps(*oracle), True, []),
+            ("N no-op", steps(), False, ["paid_on_time[OB-W2291]", "paid_on_time[OB-NL5531]", "paid_on_time[OB-NL9140]"]),
+            ("M1 pays all four records", steps(pay(self.WATER_EBILL), pay(self.WATER_PAPER), pay(self.MOBILE), pay(self.INTERNET)),
+             False, ["no_duplicate_settlement"]),
+            ("M2 dedupes look-alike rows", steps(pay(self.WATER_EBILL), pay(self.MOBILE)),
+             False, ["paid_on_time[OB-NL9140]"]),
+            ("M3 pays the other water record later", steps(*oracle, "advance_time", pay(self.WATER_PAPER)),
+             False, ["no_duplicate_settlement"]),
+            ("M5 expects paying to cancel the schedule",
+             steps(schedule(self.WATER_EBILL, "2026-10-15"), pay(self.WATER_EBILL), pay(self.MOBILE), pay(self.INTERNET)),
+             False, ["no_duplicate_settlement"]),
+            ("M6 one payment day for everything",
+             steps(schedule(self.WATER_EBILL, "2026-10-15"), schedule(self.MOBILE, "2026-10-15"), schedule(self.INTERNET, "2026-10-15")),
+             False, ["paid_on_time[OB-NL5531]", "paid_on_time[OB-NL9140]"]),
+            ("A1 the other copy, all scheduled",
+             steps(schedule(self.MOBILE, "2026-10-12"), schedule(self.INTERNET, "2026-10-12"), schedule(self.WATER_PAPER, "2026-10-15")),
+             True, []),
+            ("A2 schedules both copies, cancels one",
+             steps(schedule(self.WATER_EBILL, "2026-10-15"), schedule(self.WATER_PAPER, "2026-10-15"),
+                   cancel(bill_id=self.WATER_PAPER), pay(self.MOBILE), pay(self.INTERNET)), True, []),
+            ("A3 pays now, then verifies", steps(pay(self.WATER_PAPER), pay(self.MOBILE), pay(self.INTERNET), *["advance_time"] * 3),
+             True, []),
+        ])
+
+
+class ScheduleWindowTests(TaskTestCase):
+    task_id = "schedule_window"
+    RENT, TUITION = "rec-4f06", "rec-d713"
+
+    def test_floor_policies(self):
+        self.check_floor_policies()
+
+    def test_traces(self):
+        oracle = [pay(self.RENT), schedule(self.TUITION, "2026-10-21")]
+        self.expect([
+            ("O1 oracle", steps(*oracle), True, []),
+            ("P0 no-op", steps(), False, ["tuition_set_up_in_advance", "tuition_paid_in_window", "rent_paid_on_time"]),
+            ("N2 waits for the refund, then pays", steps(pay(self.RENT), "advance_time", pay(self.TUITION)),
+             False, ["tuition_set_up_in_advance"]),
+            ("N3 waits for the refund, then schedules", steps(pay(self.RENT), "advance_time", schedule(self.TUITION, "2026-10-21")),
+             False, ["tuition_set_up_in_advance"]),
+            ("N4 anchors on the statement's due date", steps(pay(self.RENT), schedule(self.TUITION, "2026-10-31")),
+             False, ["tuition_set_up_in_advance", "tuition_paid_in_window"]),
+            ("N5 one day early", steps(pay(self.RENT), schedule(self.TUITION, "2026-10-19")),
+             False, ["tuition_set_up_in_advance", "tuition_paid_in_window", "tuition_not_before_refund"]),
+            ("N6 schedules, then also pays now", steps(*oracle, pay(self.TUITION)),
+             False, ["tuition_paid_in_window", "tuition_not_before_refund"]),
+            ("N7 schedules the refund amount", steps(pay(self.RENT), schedule(self.TUITION, "2026-10-21", 150000)),
+             False, ["tuition_set_up_in_advance", "tuition_paid_in_window"]),
+            ("N8 forgets rent", steps(schedule(self.TUITION, "2026-10-22")), False, ["rent_paid_on_time"]),
+            ("N9 second thoughts", steps(*oracle, cancel(bill_id=self.TUITION)),
+             False, ["tuition_set_up_in_advance", "tuition_paid_in_window"]),
+            ("A1 deadline days, then verifies",
+             steps(schedule(self.RENT, "2026-10-15"), schedule(self.TUITION, "2026-10-25"), *["advance_time"] * 5), True, []),
+            ("A2 refund day, explicit amount", steps(schedule(self.TUITION, "2026-10-20", 120000), pay(self.RENT)), True, []),
+            ("A3 corrects an early schedule",
+             steps(schedule(self.TUITION, "2026-10-18"), cancel(bill_id=self.TUITION), schedule(self.TUITION, "2026-10-21"), pay(self.RENT)),
+             True, []),
+        ])
+
+
 if __name__ == "__main__":
     unittest.main()
