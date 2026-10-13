@@ -1,0 +1,51 @@
+{
+  "id": "price_increase_review",
+  "title": "Cancel subscriptions whose next charge exceeds a monthly price limit",
+  "start_date": "2026-10-01",
+  "horizon": "2026-10-31",
+  "initial_balance_cents": 50000,
+  "documents": [
+    {"id": "user-note", "text": "Note from Sam (October 1, 2026): Several services sent price-change emails. Cancel any subscription whose next charge would be more than $15.00 per month, before that charge happens. For annual plans, use the yearly price divided by 12. Keep everything else."},
+    {"id": "notice-streamflix", "text": "Streamflix: starting with bills on or after October 20, 2026, Streamflix Standard will cost $17.99 per month (currently $12.99). Your next renewal is October 22, 2026."},
+    {"id": "notice-tunebox", "text": "TuneBox Music: starting with bills on or after October 10, 2026, TuneBox Individual will cost $11.99 per month (currently $10.99). Your next renewal is October 18, 2026."},
+    {"id": "notice-photovault", "text": "PhotoVault Cloud: your annual 2 TB plan will renew at $119.00 per year (currently $99.00) starting October 1, 2026. Your next renewal is October 25, 2026."},
+    {"id": "notice-dailyledger", "text": "Daily Ledger: starting October 5, 2026, the digital subscription will cost $15.00 per month (currently $14.50). Your next renewal is October 15, 2026."},
+    {"id": "notice-gamepass", "text": "GameDen Pass: good news! Starting October 8, 2026, your plan drops from $16.99 to $14.99 per month. Your next renewal is October 16, 2026."}
+  ],
+  "subscriptions": [
+    {"id": "streamflix", "name": "Streamflix", "document_id": "notice-streamflix", "plan": "standard", "plans": {"standard": {"price_cents": 1299}}, "billing_period": "monthly", "cancel_notice_days": 0},
+    {"id": "tunebox", "name": "TuneBox Music", "document_id": "notice-tunebox", "plan": "individual", "plans": {"individual": {"price_cents": 1099}}, "billing_period": "monthly", "cancel_notice_days": 0},
+    {"id": "photovault", "name": "PhotoVault Cloud", "document_id": "notice-photovault", "plan": "2tb_annual", "plans": {"2tb_annual": {"price_cents": 9900}}, "billing_period": "annual", "cancel_notice_days": 0},
+    {"id": "dailyledger", "name": "Daily Ledger", "document_id": "notice-dailyledger", "plan": "digital", "plans": {"digital": {"price_cents": 1450}}, "billing_period": "monthly", "cancel_notice_days": 0},
+    {"id": "gamepass", "name": "GameDen Pass", "document_id": "notice-gamepass", "plan": "standard", "plans": {"standard": {"price_cents": 1699}}, "billing_period": "monthly", "cancel_notice_days": 0}
+  ],
+  "usage": {},
+  "events": [
+    {"id": "price-photovault", "date": "2026-10-01", "type": "price_change", "subscription_id": "photovault", "plan": "2tb_annual", "price_cents": 11900},
+    {"id": "price-dailyledger", "date": "2026-10-05", "type": "price_change", "subscription_id": "dailyledger", "plan": "digital", "price_cents": 1500},
+    {"id": "price-gamepass", "date": "2026-10-08", "type": "price_change", "subscription_id": "gamepass", "plan": "standard", "price_cents": 1499},
+    {"id": "price-tunebox", "date": "2026-10-10", "type": "price_change", "subscription_id": "tunebox", "plan": "individual", "price_cents": 1199},
+    {"id": "renew-dailyledger", "date": "2026-10-15", "type": "renewal", "subscription_id": "dailyledger"},
+    {"id": "renew-gamepass", "date": "2026-10-16", "type": "renewal", "subscription_id": "gamepass"},
+    {"id": "renew-tunebox", "date": "2026-10-18", "type": "renewal", "subscription_id": "tunebox"},
+    {"id": "price-streamflix", "date": "2026-10-20", "type": "price_change", "subscription_id": "streamflix", "plan": "standard", "price_cents": 1799},
+    {"id": "renew-streamflix", "date": "2026-10-22", "type": "renewal", "subscription_id": "streamflix"},
+    {"id": "renew-photovault", "date": "2026-10-25", "type": "renewal", "subscription_id": "photovault"}
+  ],
+  "goal": "Cancel exactly the subscriptions whose next charge would exceed $15.00 per month, before that charge, and keep the rest.",
+  "expected": {
+    "subscriptions": {
+      "streamflix": {"status": "cancelled", "cancel_by": "2026-10-21"},
+      "tunebox": {"status": "active"},
+      "photovault": {"status": "active"},
+      "dailyledger": {"status": "active"},
+      "gamepass": {"status": "active"}
+    },
+    "charges": [
+      {"subscription_id": "dailyledger", "date": "2026-10-15", "amount_cents": 1500},
+      {"subscription_id": "gamepass", "date": "2026-10-16", "amount_cents": 1499},
+      {"subscription_id": "tunebox", "date": "2026-10-18", "amount_cents": 1199},
+      {"subscription_id": "photovault", "date": "2026-10-25", "amount_cents": 11900}
+    ]
+  }
+}
