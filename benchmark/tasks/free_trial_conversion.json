@@ -1,0 +1,46 @@
+{
+  "id": "free_trial_conversion",
+  "title": "Cancel free trials before they convert, respecting notice periods",
+  "start_date": "2026-10-01",
+  "horizon": "2026-10-31",
+  "initial_balance_cents": 50000,
+  "documents": [
+    {"id": "user-note", "text": "Note from Sam (October 1, 2026): I started three free trials last month. Keep LinguaLoop, I use it every day. Cancel the other trials before they turn into paid plans. Do not touch my regular paid subscriptions."},
+    {"id": "trial-lingualoop", "text": "LinguaLoop: your free trial ends October 9, 2026. After that, LinguaLoop Plus is $12.99 per month. You can cancel any time before the trial ends."},
+    {"id": "trial-snapedit", "text": "SnapEdit Pro: your free trial ends October 6, 2026, and converts to $9.99 per month. To avoid being charged, cancel at least 2 days before the trial ends."},
+    {"id": "trial-mealcrate", "text": "MealCrate: your free trial ends October 14, 2026. Your first paid box is $59.99. Cancel any time before the trial ends."},
+    {"id": "sub-streamflix", "text": "Streamflix Standard: $15.49 per month. Next renewal October 12, 2026."},
+    {"id": "sub-fitpath", "text": "FitPath Gym App Premium: $19.99 per month. Next renewal October 20, 2026."},
+    {"id": "old-fitpath-email", "text": "FitPath (March 2, 2025): Welcome! Your 14-day free trial of FitPath Premium has started."}
+  ],
+  "subscriptions": [
+    {"id": "lingualoop", "name": "LinguaLoop", "document_id": "trial-lingualoop", "plan": "plus", "plans": {"plus": {"price_cents": 1299}}, "billing_period": "monthly", "cancel_notice_days": 0, "trial": true},
+    {"id": "snapedit", "name": "SnapEdit Pro", "document_id": "trial-snapedit", "plan": "pro", "plans": {"pro": {"price_cents": 999}}, "billing_period": "monthly", "cancel_notice_days": 2, "trial": true},
+    {"id": "mealcrate", "name": "MealCrate", "document_id": "trial-mealcrate", "plan": "weekly_box", "plans": {"weekly_box": {"price_cents": 5999}}, "billing_period": "monthly", "cancel_notice_days": 0, "trial": true},
+    {"id": "streamflix", "name": "Streamflix", "document_id": "sub-streamflix", "plan": "standard", "plans": {"standard": {"price_cents": 1549}}, "billing_period": "monthly", "cancel_notice_days": 0, "trial": false},
+    {"id": "fitpath", "name": "FitPath Gym App", "document_id": "sub-fitpath", "plan": "premium", "plans": {"premium": {"price_cents": 1999}}, "billing_period": "monthly", "cancel_notice_days": 0, "trial": false}
+  ],
+  "usage": {},
+  "events": [
+    {"id": "convert-snapedit", "date": "2026-10-06", "type": "renewal", "subscription_id": "snapedit"},
+    {"id": "convert-lingualoop", "date": "2026-10-09", "type": "renewal", "subscription_id": "lingualoop"},
+    {"id": "renew-streamflix", "date": "2026-10-12", "type": "renewal", "subscription_id": "streamflix"},
+    {"id": "convert-mealcrate", "date": "2026-10-14", "type": "renewal", "subscription_id": "mealcrate"},
+    {"id": "renew-fitpath", "date": "2026-10-20", "type": "renewal", "subscription_id": "fitpath"}
+  ],
+  "goal": "Cancel the unwanted trials in time to avoid any trial charge, keep LinguaLoop, and leave regular subscriptions unchanged.",
+  "expected": {
+    "subscriptions": {
+      "lingualoop": {"status": "active"},
+      "snapedit": {"status": "cancelled", "cancel_by": "2026-10-04"},
+      "mealcrate": {"status": "cancelled", "cancel_by": "2026-10-13"},
+      "streamflix": {"status": "active"},
+      "fitpath": {"status": "active"}
+    },
+    "charges": [
+      {"subscription_id": "lingualoop", "date": "2026-10-09", "amount_cents": 1299},
+      {"subscription_id": "streamflix", "date": "2026-10-12", "amount_cents": 1549},
+      {"subscription_id": "fitpath", "date": "2026-10-20", "amount_cents": 1999}
+    ]
+  }
+}
