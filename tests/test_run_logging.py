@@ -44,7 +44,7 @@ class RunLoggingTests(unittest.TestCase):
             self.assertEqual(record["status"], "error")
             self.assertIn("TINKER_API_KEY", record["error"])
 
-    def test_tool_failure_keeps_attempted_call_and_partial_state(self):
+    def test_tool_error_is_returned_to_agent_and_run_completes(self):
         bad_response = SimpleNamespace(
             stop_reason="tool_use",
             content=[SimpleNamespace(
@@ -56,15 +56,18 @@ class RunLoggingTests(unittest.TestCase):
             with patch.object(run_agent_script, "RUNS_DIR", Path(directory)), patch.object(
                 run_agent_script, "Anthropic", return_value=client
             ), patch.dict(os.environ, {"TINKER_API_KEY": "test-secret", "TINKER_MODEL": "test-model"}, clear=True):
-                with self.assertRaises(SystemExit):
-                    run_agent_script.main()
+                run_agent_script.main()
 
             record = json.loads(next(Path(directory).glob("*.json")).read_text())
-            self.assertEqual(record["status"], "error")
-            self.assertEqual(record["api_calls"][0]["stop_reason"], "tool_use")
-            self.assertEqual(record["tool_calls"][0]["input"], {"bill_id": "unknown"})
-            self.assertNotIn("output", record["tool_calls"][0])
-            self.assertEqual(record["final_state"]["balance_cents"], 12000)
+            self.assertEqual(record["status"], "completed")
+            self.assertEqual(record["stop_reason"], "max_steps")
+            self.assertFalse(record["task_success"])
+            self.assertEqual(len(record["tool_calls"]), 20)
+            first_call = record["tool_calls"][0]
+            self.assertEqual(first_call["input"], {"bill_id": "unknown"})
+            self.assertTrue(first_call["is_error"])
+            self.assertIn("unknown", json.loads(first_call["output"])["error"])
+            self.assertEqual(record["final_state"]["payments"], [])
 
 
 if __name__ == "__main__":
