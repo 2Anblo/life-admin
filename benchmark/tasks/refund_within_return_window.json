@@ -1,0 +1,93 @@
+{
+ "schema_version": 3,
+ "id": "refund_within_return_window",
+ "title": "Brightway return",
+ "instruction": "I sent some things back from my Brightway order. Get my money back for whatever is eligible, to my original card.",
+ "start_date": "2026-10-10",
+ "horizon": "2026-10-20",
+ "initial_balance_cents": 82000,
+ "accounts": [
+  {"id": "checking", "label": "Checking account", "kind": "checking"},
+  {"id": "visa-4421", "label": "Visa ending 4421", "kind": "credit_card"},
+  {"id": "brightway-store-credit", "label": "Brightway store credit", "kind": "store_credit"}
+ ],
+ "documents": [
+  {
+   "id": "doc-b1r7",
+   "title": "Brightway: order receipt BW-55120",
+   "text": "Brightway Home - order receipt\nOrder BW-55120    Placed October 2, 2026\nShip to: Casey Nguyen\n\nItem L-208  Arden desk lamp, brass        $74.50\nItem C-311  Slimfit phone case, navy      $18.00\nSubtotal: $92.50    Tax: $0.00    Total: $92.50\nPaid with: Visa ending 4421\n\nReturns: items may be returned within 30 days of delivery.",
+   "release_date": null
+  },
+  {
+   "id": "doc-b2c4",
+   "title": "Brightway: return received",
+   "text": "Brightway Home - return received\nDate: October 9, 2026\nOrder BW-55120    Return RMA-7731\n\nWe received the following item at our returns center on October 9, 2026:\nItem L-208  Arden desk lamp, brass  ($74.50)\nCondition check: passed.\n\nYour return is now eligible for a refund. Submit your refund request in your Brightway account by October 14, 2026. Refunds go to Brightway store credit unless you choose your original payment method. Refunds to an original card post 3 business days after the request is approved.",
+   "release_date": null
+  },
+  {
+   "id": "doc-b3l9",
+   "title": "Brightway: return label created",
+   "text": "Brightway Home - return label\nCreated: October 7, 2026\nOrder BW-55120    Return RMA-7744\nItem C-311  Slimfit phone case, navy\n\nPrint this label and drop off your package with any CityPost location. Your refund becomes available after we receive and inspect the item.\n\nTracking CP-90311-4: label created, awaiting drop-off.",
+   "release_date": null
+  },
+  {
+   "id": "doc-b4p2",
+   "title": "Brightway: return and refund policy",
+   "text": "Brightway Home - return and refund policy (excerpt)\n1. Refunds are available only for items that our returns center has received and inspected.\n2. A refund request must be submitted within 5 days after we confirm receipt of your return.\n3. You may choose the refund destination: Brightway store credit (default) or your original payment method.\n4. Each returned item may be refunded once.",
+   "release_date": null
+  }
+ ],
+ "orders": [
+  {
+   "order_id": "BW-55120",
+   "merchant": "Brightway Home",
+   "date": "2026-10-02",
+   "items": [
+    {"item_id": "L-208", "name": "Arden desk lamp", "price_cents": 7450},
+    {"item_id": "C-311", "name": "Slimfit phone case", "price_cents": 1800}
+   ],
+   "tenders": [{"account": "visa-4421", "amount_cents": 9250}],
+   "returns": [
+    {"rma": "RMA-7731", "item_id": "L-208", "status": "received", "received_on": "2026-10-09"},
+    {"rma": "RMA-7744", "item_id": "C-311", "status": "label_created", "received_on": null}
+   ]
+  }
+ ],
+ "cases": [],
+ "transactions": [
+  {"transaction_id": "tx-3301", "date": "2026-10-02", "account": "visa-4421", "amount_cents": -9250, "kind": "purchase", "descriptor": "BRIGHTWAY HOME", "reference": "BW-55120"}
+ ],
+ "refund_policy": {
+  "default_destination": "brightway-store-credit",
+  "request_deadline": "2026-10-14"
+ },
+ "rules": [
+  "request_refund for an item whose return has status 'received' is accepted; the refund posts to each allocation 3 business days after the request date (for a request on 2026-10-10 to 2026-10-14, by 2026-10-19).",
+  "request_refund for an item that has not been received is accepted by the form but declined by the merchant the next day with a notice; no money moves.",
+  "A second request for an item already refunded is accepted by the form but produces no second refund."
+ ],
+ "hidden": {
+  "checker": "benchmark.checkers.merchant_cases:check",
+  "expected": {
+   "refund_requests": [
+    {"order_id": "BW-55120", "items": ["L-208"], "allocations": [{"account": "visa-4421", "amount_cents": 7450}], "by": "2026-10-14"}
+   ],
+   "escalations": [],
+   "closures": [],
+   "disputes": [],
+   "refund_credits": [
+    {"account": "visa-4421", "amount_cents": 7450, "by": "2026-10-20"}
+   ]
+  },
+  "annotations": {
+   "valid_sources": ["doc-b2c4", "doc-b4p2"],
+   "distractor_sources": ["doc-b3l9"],
+   "difficulty_factors": ["E"],
+   "difficulty": "easy"
+  },
+  "reference_plan": [
+   {"tool": "request_refund", "args": {"order_id": "BW-55120", "items": ["L-208"], "amount_cents": 7450, "allocations": [{"account": "visa-4421", "amount_cents": 7450}]}},
+   {"tool": "advance_time", "args": {}}
+  ]
+ }
+}

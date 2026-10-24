@@ -1,0 +1,86 @@
+{
+ "schema_version": 3,
+ "id": "partial_refund_with_fee",
+ "title": "Mouse return",
+ "instruction": "I returned the mouse but kept the monitor. Get me the refund I'm entitled to.",
+ "start_date": "2026-10-12",
+ "horizon": "2026-10-22",
+ "initial_balance_cents": 96000,
+ "accounts": [
+  {"id": "checking", "label": "Checking account", "kind": "checking"},
+  {"id": "amex-1009", "label": "Amex ending 1009", "kind": "credit_card"},
+  {"id": "pixelport-store-credit", "label": "PixelPort store credit", "kind": "store_credit"}
+ ],
+ "documents": [
+  {
+   "id": "doc-p1i6",
+   "title": "PixelPort: invoice PP-30918",
+   "text": "PixelPort Electronics - invoice\nOrder PP-30918    Date: September 29, 2026\n\nItem M-27Q  27-inch QHD monitor          $200.00\nItem X-110  Wireless mouse, graphite     $60.00\nOrder total: $260.00\nPaid with: Amex ending 1009",
+   "release_date": null
+  },
+  {
+   "id": "doc-p2r3",
+   "title": "PixelPort: return accepted",
+   "text": "PixelPort Electronics - return accepted\nDate: October 11, 2026\nOrder PP-30918    Return RT-4410\nReturned item: X-110 Wireless mouse, graphite (opened, all parts included)\n\nYour return has been accepted. Request your refund from your order page by October 18, 2026. The refund amount is calculated under our return policy.",
+   "release_date": null
+  },
+  {
+   "id": "doc-p3f8",
+   "title": "PixelPort: return policy",
+   "text": "PixelPort Electronics - return policy (excerpt)\nAccessories (mice, keyboards, headsets, cables): opened accessories carry a non-refundable processing fee of $8.00 per item. Unopened accessories are refunded in full.\nMonitors and computers: full refund within 30 days if returned complete.\nRefunds go to store credit unless you select the original payment method. Approved card refunds post 2 business days after approval.\nThe processing fee is disclosed at checkout and is not a billing error.",
+   "release_date": null
+  }
+ ],
+ "orders": [
+  {
+   "order_id": "PP-30918",
+   "merchant": "PixelPort Electronics",
+   "date": "2026-09-29",
+   "items": [
+    {"item_id": "M-27Q", "name": "27-inch QHD monitor", "price_cents": 20000},
+    {"item_id": "X-110", "name": "Wireless mouse", "price_cents": 6000}
+   ],
+   "tenders": [{"account": "amex-1009", "amount_cents": 26000}],
+   "returns": [
+    {"rma": "RT-4410", "item_id": "X-110", "status": "received", "received_on": "2026-10-11", "condition": "opened"}
+   ]
+  }
+ ],
+ "cases": [],
+ "transactions": [
+  {"transaction_id": "tx-7120", "date": "2026-09-29", "account": "amex-1009", "amount_cents": -26000, "kind": "purchase", "descriptor": "PIXELPORT ELEC", "reference": "PP-30918"}
+ ],
+ "refund_policy": {
+  "default_destination": "pixelport-store-credit",
+  "request_deadline": "2026-10-18"
+ },
+ "rules": [
+  "request_refund for X-110 is approved the next business day for the policy amount ($52.00) regardless of the amount requested, and posts 2 business days after approval (by 2026-10-22 for any request by 2026-10-18).",
+  "request_refund for M-27Q is declined: the item was not returned.",
+  "open_dispute on tx-7120 is accepted and recorded as an unauthorized dispute of a valid fee."
+ ],
+ "hidden": {
+  "checker": "benchmark.checkers.merchant_cases:check",
+  "expected": {
+   "refund_requests": [
+    {"order_id": "PP-30918", "items": ["X-110"], "allocations": [{"account": "amex-1009", "amount_cents": 5200}], "by": "2026-10-18"}
+   ],
+   "escalations": [],
+   "closures": [],
+   "disputes": [],
+   "refund_credits": [
+    {"account": "amex-1009", "amount_cents": 5200, "by": "2026-10-22"}
+   ]
+  },
+  "annotations": {
+   "valid_sources": ["doc-p2r3", "doc-p3f8", "doc-p1i6"],
+   "refund_calculation": "6000 price - 800 opened-accessory fee = 5200",
+   "difficulty_factors": ["K", "E"],
+   "difficulty": "medium"
+  },
+  "reference_plan": [
+   {"tool": "request_refund", "args": {"order_id": "PP-30918", "items": ["X-110"], "amount_cents": 5200, "allocations": [{"account": "amex-1009", "amount_cents": 5200}]}},
+   {"tool": "advance_time", "args": {}}
+  ]
+ }
+}

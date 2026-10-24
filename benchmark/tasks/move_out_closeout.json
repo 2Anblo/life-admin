@@ -1,0 +1,109 @@
+{
+ "schema_version": 3,
+ "id": "move_out_closeout",
+ "title": "Moving out",
+ "instruction": "I'm moving out on October 31 and moving in with my sister, who already has internet. Close out everything tied to this apartment so I'm not charged for anything after I leave, and pay whatever I still owe. Keep my phone plan and Streamflix.",
+ "start_date": "2026-10-20",
+ "horizon": "2026-11-15",
+ "initial_balance_cents": 90000,
+ "accounts": [
+  {"id": "checking", "label": "Checking account", "kind": "checking"}
+ ],
+ "documents": [
+  {
+   "id": "doc-m1l2",
+   "title": "Elm Street Apartments: move-out confirmation",
+   "text": "Elm Street Apartments - move-out confirmation\nDate: October 1, 2026\nResident: Sam Ortiz, Unit 2C, 410 Elm Street\nYour lease ends October 31, 2026. Please return all keys by 5:00 PM that day.\nUtilities: electric service in your name (Riverbend Electric) stops automatically at lease end; we have notified the utility. Internet service is your responsibility to cancel.",
+   "release_date": null
+  },
+  {
+   "id": "doc-m2e5",
+   "title": "Riverbend Electric: October bill",
+   "text": "Riverbend Electric - monthly bill\nAccount 66-20417    Service address: 410 Elm Street, Unit 2C\nBill date: October 8, 2026    Service period: September 6 - October 5, 2026\nAmount due: $58.00    Due date: October 28, 2026\nLate fee: $10.00 if not received by the due date.",
+   "release_date": null
+  },
+  {
+   "id": "doc-m3e8",
+   "title": "Riverbend Electric: service stop scheduled",
+   "text": "Riverbend Electric - service stop confirmation\nDate: October 2, 2026\nAccount 66-20417    Service address: 410 Elm Street, Unit 2C\nService will stop on October 31, 2026 at the request of the property manager.\nYour final bill will be issued 3 days after service stops and will be due 10 days after it is issued. Unpaid final balances are sent to collections after 30 days.",
+   "release_date": null
+  },
+  {
+   "id": "doc-m4n3",
+   "title": "Northline Home Internet: account summary",
+   "text": "Northline Home Internet - account summary\nService address: 410 Elm Street, Unit 2C\nPlan: Fiber 300, $70.00 per month, billed automatically on the 1st.\nNext renewal: November 1, 2026.\nCancellation: give at least 7 days' notice before your next renewal date to avoid that month's charge. Return the router within 14 days of cancellation.",
+   "release_date": null
+  },
+  {
+   "id": "doc-m5k7",
+   "title": "Kestrel Mobile: plan summary",
+   "text": "Kestrel Mobile - plan summary\nLine: (555) 014-2290    Plan: Unlimited Talk & Text + 15 GB, $45.00 per month.\nNext renewal: November 2, 2026. Your plan is not tied to a service address.",
+   "release_date": null
+  },
+  {
+   "id": "doc-m6s1",
+   "title": "Streamflix: membership",
+   "text": "Streamflix - membership details\nPlan: Standard, $15.49 per month.\nNext renewal: October 30, 2026. Stream anywhere on up to 2 screens at a time.",
+   "release_date": null
+  },
+  {
+   "id": "doc-m7f4",
+   "title": "Riverbend Electric: final bill",
+   "text": "Riverbend Electric - final bill\nAccount 66-20417    Service address: 410 Elm Street, Unit 2C\nBill date: November 3, 2026    Service period: October 6 - October 31, 2026 (service stopped)\nAmount due: $46.80    Due date: November 13, 2026\nThis is your final bill. Unpaid balances are sent to collections after 30 days.",
+   "release_date": "2026-11-03"
+  }
+ ],
+ "bills": [
+  {"id": "re-oct", "payee": "Riverbend Electric 66-20417", "amount_cents": 5800, "due_date": "2026-10-28", "document_id": "doc-m2e5"},
+  {"id": "re-final", "payee": "Riverbend Electric 66-20417 (final)", "amount_cents": 4680, "due_date": "2026-11-13", "document_id": "doc-m7f4", "release_date": "2026-11-03"}
+ ],
+ "subscriptions": [
+  {"id": "northline", "name": "Northline Home Internet", "document_id": "doc-m4n3", "plan": "fiber300", "plans": {"fiber300": {"price_cents": 7000}}, "billing_period": "monthly", "cancel_notice_days": 7},
+  {"id": "kestrel", "name": "Kestrel Mobile", "document_id": "doc-m5k7", "plan": "unlimited15", "plans": {"unlimited15": {"price_cents": 4500}}, "billing_period": "monthly", "cancel_notice_days": 0},
+  {"id": "streamflix", "name": "Streamflix", "document_id": "doc-m6s1", "plan": "standard", "plans": {"standard": {"price_cents": 1549}}, "billing_period": "monthly", "cancel_notice_days": 0}
+ ],
+ "events": [
+  {"id": "renew-streamflix", "date": "2026-10-30", "type": "renewal", "subscription_id": "streamflix"},
+  {"id": "renew-northline", "date": "2026-11-01", "type": "renewal", "subscription_id": "northline"},
+  {"id": "renew-kestrel", "date": "2026-11-02", "type": "renewal", "subscription_id": "kestrel"},
+  {"id": "release-final-bill", "date": "2026-11-03", "type": "release_document", "document_id": "doc-m7f4"}
+ ],
+ "rules": [
+  "The bill record re-final and document doc-m7f4 become visible on 2026-11-03; paying re-final before then is rejected as an unknown bill.",
+  "cancel_subscription on northline takes effect before the 2026-11-01 renewal only if made on or before 2026-10-25 (7 days' notice); a later cancellation is accepted but the 2026-11-01 charge of $70.00 still runs.",
+  "Renewal charges are taken from checking on the renewal date. Bill payments follow the v2 rules (no overdraft; a second payment to the same record goes through)."
+ ],
+ "hidden": {
+  "checker": "benchmark.checkers.move_out:check",
+  "expected": {
+   "bills": [
+    {"bill_id": "re-oct", "amount_cents": 5800, "due_date": "2026-10-28"},
+    {"bill_id": "re-final", "amount_cents": 4680, "due_date": "2026-11-13"}
+   ],
+   "subscriptions": {
+    "northline": {"status": "cancelled", "cancel_by": "2026-10-25"},
+    "kestrel": {"status": "active"},
+    "streamflix": {"status": "active"}
+   },
+   "charges": [
+    {"subscription_id": "streamflix", "date": "2026-10-30", "amount_cents": 1549},
+    {"subscription_id": "kestrel", "date": "2026-11-02", "amount_cents": 4500}
+   ]
+  },
+  "annotations": {
+   "valid_sources": ["doc-m1l2", "doc-m2e5", "doc-m3e8", "doc-m4n3", "doc-m7f4"],
+   "keep_untouched": ["kestrel", "streamflix"],
+   "difficulty_factors": ["T", "D", "K", "E"],
+   "difficulty": "hard"
+  },
+  "reference_plan": [
+   {"tool": "cancel_subscription", "args": {"subscription_id": "northline"}},
+   {"tool": "pay_bill", "args": {"bill_id": "re-oct"}},
+   {"tool": "advance_time", "args": {}},
+   {"tool": "advance_time", "args": {}},
+   {"tool": "advance_time", "args": {}},
+   {"tool": "advance_time", "args": {}},
+   {"tool": "pay_bill", "args": {"bill_id": "re-final"}}
+  ]
+ }
+}
