@@ -1,0 +1,110 @@
+{
+ "schema_version": 2,
+ "id": "credit_card_statement_balance",
+ "title": "Visa payment",
+ "instruction": "Please pay my Lakeshore Visa so that I don't get charged any interest, but don't send more than that right now. I need the rest of the cash in checking for rent.",
+ "start_date": "2026-10-15",
+ "horizon": "2026-11-05",
+ "initial_balance_cents": 150000,
+ "display_order": [
+  "doc-v4k1",
+  "doc-q7t2",
+  "doc-m3x9"
+ ],
+ "documents": [
+  {
+   "id": "doc-q7t2",
+   "title": "Lakeshore Visa: monthly statement",
+   "text": "Lakeshore Bank Visa Signature - monthly statement\nCardholder: Alex Moreno    Account ending 8803\nStatement closing date: October 10, 2026\n\nPrevious balance: $388.90\nPayments and credits: -$388.90\nPurchases: +$412.37\nInterest charged: $0.00\nNew balance (statement balance): $412.37\n\nMinimum payment due: $35.00\nPayment due date: November 4, 2026\n\nInterest: if you pay your statement balance in full by the payment due date, you will not be charged interest on purchases. If you pay less than the statement balance, interest is charged on purchases from the date of each transaction.\nLate payment: a fee of up to $40.00 applies if we do not receive at least the minimum payment by the payment due date.",
+   "release_date": null
+  },
+  {
+   "id": "doc-v4k1",
+   "title": "Lakeshore Visa: account summary",
+   "text": "Lakeshore Bank online banking - Visa account summary\nAccount ending 8803    As of October 15, 2026\n\nCurrent balance: $530.12\nStatement balance (closed October 10): $412.37\nPurchases since your last statement: $117.75\nAvailable credit: $4,469.88\n\nRecent transactions since October 10:\nOct 11  Green Basket Grocery   $64.30\nOct 13  Metro Transit Pass     $28.00\nOct 14  Corner Pharmacy        $25.45\n\nPurchases made after the statement closing date will appear on your next statement (closing November 10, 2026).",
+   "release_date": null
+  },
+  {
+   "id": "doc-m3x9",
+   "title": "Bill Pay: payee details",
+   "text": "Bill Pay - payee details\nPayee: Lakeshore Bank Visa (account ending 8803)\nAmount shown: minimum payment due from your latest eBill, $35.00\nDue date shown: November 4, 2026\n\nYou can pay any amount. If you do not enter an amount, Bill Pay sends the amount shown. Payments reach Lakeshore Bank on the payment date.",
+   "release_date": null
+  }
+ ],
+ "bills": [
+  {
+   "id": "bp-8803",
+   "payee": "Lakeshore Bank Visa ...8803",
+   "amount_cents": 3500,
+   "due_date": "2026-11-04",
+   "document_id": "doc-m3x9"
+  }
+ ],
+ "events": [],
+ "initial_history": {
+  "payments": [
+   {
+    "payment_id": "pay-0921",
+    "bill_id": "bp-8803",
+    "amount_cents": 38890,
+    "date": "2026-10-02"
+   }
+  ],
+  "failed_payments": [],
+  "pending": []
+ },
+ "hidden": {
+  "obligations": [
+   {
+    "id": "visa-statement-balance",
+    "records": ["bp-8803"],
+    "amount_cents": 41237,
+    "due_date": "2026-11-04",
+    "must_pay": true
+   }
+  ],
+  "checker": "benchmark.checkers.statement_balance:check",
+  "checker_params": {
+   "minimum_due_cents": 3500,
+   "current_balance_cents": 53012
+  },
+  "annotations": {
+   "valid_sources": ["doc-q7t2"],
+   "distractor_sources": ["doc-v4k1", "doc-m3x9"],
+   "interest_free_amount_cents": 41237,
+   "difficulty_factors": ["K"],
+   "difficulty": "easy"
+  },
+  "document_claims": [
+   {
+    "document_id": "doc-q7t2",
+    "bill_id": "bp-8803",
+    "issued": "2026-10-10",
+    "due_date": "2026-11-04",
+    "amount_cents": 3500
+   },
+   {
+    "document_id": "doc-v4k1",
+    "bill_id": "bp-8803",
+    "issued": "2026-10-15",
+    "due_date": "2026-11-04",
+    "amount_cents": 53012
+   }
+  ],
+  "reference_plan": [
+   {
+    "tool": "pay_bill",
+    "args": {"bill_id": "bp-8803", "amount_cents": 41237}
+   }
+  ],
+  "floor_expected": {
+   "P0_noop": "fail",
+   "P1_last_allowed_date": "fail",
+   "P2_greedy": "fail",
+   "P3_pay_all_now": "fail",
+   "P4_newest_document": "fail",
+   "P5_oldest_document": "fail",
+   "P6_open_loop": "pass"
+  }
+ }
+}
