@@ -1,0 +1,83 @@
+{
+ "schema_version": 3,
+ "id": "missing_refund_escalation",
+ "title": "Approved refunds",
+ "instruction": "Two of my refunds were approved, but I'm not sure the money arrived. Follow up on any that are late, and only close a refund case once the money is actually in my account.",
+ "start_date": "2026-10-10",
+ "horizon": "2026-10-22",
+ "initial_balance_cents": 118000,
+ "accounts": [
+  {"id": "checking", "label": "Checking account", "kind": "checking"},
+  {"id": "debit-7734", "label": "Debit card ending 7734 (checking)", "kind": "debit_card"},
+  {"id": "visa-2086", "label": "Visa ending 2086", "kind": "credit_card"}
+ ],
+ "documents": [
+  {
+   "id": "doc-c1a3",
+   "title": "Corvid Audio: refund approved",
+   "text": "Corvid Audio - refund approved\nDate: October 10, 2026\nReturn case case-cv-118    Order CV-3302\nRefund amount: $140.00 to your debit card ending 7734.\nYou will receive the credit by end of day October 15, 2026.\nIf the credit has not arrived by then, escalate your return case starting October 16. Escalations before the promised date cannot be accepted.",
+   "release_date": null
+  },
+  {
+   "id": "doc-c2d6",
+   "title": "Corvid Audio: return case status",
+   "text": "Corvid Audio - My returns (page saved October 10, 2026)\nCase case-cv-118\nStatus: Processed\n\n'Processed' means your refund was approved and sent to our payment processor. Bank posting times vary.",
+   "release_date": null
+  },
+  {
+   "id": "doc-p1h8",
+   "title": "Pinefield Home: refund approved",
+   "text": "Pinefield Home - refund approved\nDate: October 10, 2026\nReturn case case-pf-552    Order PF-7718\nRefund amount: $95.00 to your Visa ending 2086, expected by October 15, 2026.\nStatus: Processed.",
+   "release_date": null
+  }
+ ],
+ "orders": [],
+ "cases": [
+  {"case_id": "case-cv-118", "merchant": "Corvid Audio", "order_id": "CV-3302", "amount_cents": 14000, "status_shown": "processed", "promised_by": "2026-10-15", "opened_on": "2026-10-03"},
+  {"case_id": "case-pf-552", "merchant": "Pinefield Home", "order_id": "PF-7718", "amount_cents": 9500, "status_shown": "processed", "promised_by": "2026-10-15", "opened_on": "2026-10-05"}
+ ],
+ "transactions": [
+  {"transaction_id": "tx-8102", "date": "2026-09-28", "account": "debit-7734", "amount_cents": -14000, "kind": "purchase", "descriptor": "CORVID AUDIO", "reference": "CV-3302"},
+  {"transaction_id": "tx-8107", "date": "2026-09-30", "account": "visa-2086", "amount_cents": -9500, "kind": "purchase", "descriptor": "PINEFIELD HOME", "reference": "PF-7718"}
+ ],
+ "rules": [
+  "Pinefield's $95.00 refund posts to visa-2086 on 2026-10-14 (transaction tx-8150).",
+  "Corvid's $140.00 refund does not post unless the case is escalated.",
+  "escalate_case on case-cv-118 before 2026-10-16 is rejected with reason 'premature'. On 2026-10-16 or 2026-10-17 it is accepted and $140.00 posts to debit-7734 on 2026-10-18 (transaction tx-8171). After 2026-10-17 it is accepted but the credit posts after the horizon.",
+  "escalate_case on case-pf-552 is accepted and answered with 'refund already settled'.",
+  "request_refund on either case is declined as a duplicate. open_dispute is accepted by the card issuer and recorded."
+ ],
+ "hidden": {
+  "checker": "benchmark.checkers.merchant_cases:check",
+  "expected": {
+   "refund_requests": [],
+   "escalations": [
+    {"case_id": "case-cv-118", "from": "2026-10-16", "to": "2026-10-17"}
+   ],
+   "closures": [
+    {"case_id": "case-pf-552", "not_before": "2026-10-14", "matched_transaction_id": "tx-8150"},
+    {"case_id": "case-cv-118", "not_before": "2026-10-18", "matched_transaction_id": "tx-8171"}
+   ],
+   "disputes": [],
+   "refund_credits": [
+    {"account": "visa-2086", "amount_cents": 9500, "by": "2026-10-15"},
+    {"account": "debit-7734", "amount_cents": 14000, "by": "2026-10-20"}
+   ]
+  },
+  "annotations": {
+   "valid_sources": ["doc-c1a3", "doc-p1h8"],
+   "misleading_sources": ["doc-c2d6"],
+   "difficulty_factors": ["C", "T", "D", "E"],
+   "difficulty": "hard",
+   "paired_variant": "Corvid's credit posts on 2026-10-14; the correct run then escalates nothing."
+  },
+  "reference_plan": [
+   {"tool": "advance_time", "args": {}},
+   {"tool": "close_case", "args": {"case_id": "case-pf-552", "resolution": "received", "matched_transaction_id": "tx-8150"}},
+   {"tool": "advance_time", "args": {}},
+   {"tool": "escalate_case", "args": {"case_id": "case-cv-118", "note": "Refund promised by Oct 15 has not arrived."}},
+   {"tool": "advance_time", "args": {}},
+   {"tool": "close_case", "args": {"case_id": "case-cv-118", "resolution": "received", "matched_transaction_id": "tx-8171"}}
+  ]
+ }
+}

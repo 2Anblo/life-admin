@@ -1,0 +1,113 @@
+{
+ "schema_version": 3,
+ "id": "split_tender_refund",
+ "title": "Headphones refund",
+ "instruction": "I returned the headphones because they were defective. Make sure I get all $180 back and close the refund case once it's complete.",
+ "start_date": "2026-10-11",
+ "horizon": "2026-10-22",
+ "initial_balance_cents": 70500,
+ "accounts": [
+  {"id": "checking", "label": "Checking account", "kind": "checking"},
+  {"id": "debit-5520", "label": "Debit card ending 5520 (checking)", "kind": "debit_card"},
+  {"id": "soundhub-gift-card", "label": "SoundHub gift card balance", "kind": "gift_card"}
+ ],
+ "documents": [
+  {
+   "id": "doc-s1r2",
+   "title": "SoundHub: receipt SH-61904",
+   "text": "SoundHub - receipt\nOrder SH-61904    September 30, 2026\nItem H-900  Aurora noise-cancelling headphones   $180.00\nTotal: $180.00\nThank you for shopping with SoundHub.",
+   "release_date": null
+  },
+  {
+   "id": "doc-s2o7",
+   "title": "SoundHub: order details SH-61904",
+   "text": "SoundHub - order details\nOrder SH-61904\nPayment summary:\n  SoundHub gift card balance applied: $60.00\n  Debit card ending 5520: $120.00\nOrder total: $180.00",
+   "release_date": null
+  },
+  {
+   "id": "doc-s3a9",
+   "title": "SoundHub: return accepted",
+   "text": "SoundHub - return accepted\nDate: October 10, 2026\nOrder SH-61904    Return case case-sh-4471\nItem: H-900 Aurora headphones\nReturn reason: defective (left ear cup cuts out), confirmed by inspection.\n\nSubmit your refund request by October 12, 2026 to be included in this week's refund batch. Gift card credits from this batch post October 14; card refunds post October 16.",
+   "release_date": null
+  },
+  {
+   "id": "doc-s4p5",
+   "title": "SoundHub: refund policy",
+   "text": "SoundHub - refund policy (excerpt)\n1. Refunds return to the original payment method. If an order was paid with more than one method, each portion is refunded to the method that paid it.\n2. A 10% restocking fee applies to non-defective returns. No restocking fee applies to items confirmed defective.\n3. If a refund is missing or short, escalate your return case within 2 days of the posting and we will correct it within 2 days.",
+   "release_date": null
+  },
+  {
+   "id": "doc-s5n1",
+   "title": "SoundHub: card refund issued",
+   "text": "SoundHub - card refund issued\nDate: October 16, 2026\nReturn case case-sh-4471\nRefund to debit card ending 5520: $108.00\nRestocking fee: $12.00\nQuestions? Escalate your return case.",
+   "release_date": "2026-10-16"
+  }
+ ],
+ "orders": [
+  {
+   "order_id": "SH-61904",
+   "merchant": "SoundHub",
+   "date": "2026-09-30",
+   "items": [
+    {"item_id": "H-900", "name": "Aurora noise-cancelling headphones", "price_cents": 18000}
+   ],
+   "tenders": [
+    {"account": "soundhub-gift-card", "amount_cents": 6000},
+    {"account": "debit-5520", "amount_cents": 12000}
+   ],
+   "returns": [
+    {"rma": "case-sh-4471", "item_id": "H-900", "status": "received", "received_on": "2026-10-10", "condition": "defective"}
+   ]
+  }
+ ],
+ "cases": [
+  {"case_id": "case-sh-4471", "merchant": "SoundHub", "order_id": "SH-61904", "amount_cents": 18000, "status_shown": "return accepted", "opened_on": "2026-10-10"}
+ ],
+ "transactions": [
+  {"transaction_id": "tx-6011", "date": "2026-09-30", "account": "debit-5520", "amount_cents": -12000, "kind": "purchase", "descriptor": "SOUNDHUB", "reference": "SH-61904"},
+  {"transaction_id": "tx-6012", "date": "2026-09-30", "account": "soundhub-gift-card", "amount_cents": -6000, "kind": "purchase", "descriptor": "SOUNDHUB GIFT CARD", "reference": "SH-61904"}
+ ],
+ "refund_policy": {
+  "default_destination": "debit-5520",
+  "request_deadline": "2026-10-12"
+ },
+ "rules": [
+  "A request_refund by 2026-10-12 joins the batch. Each allocation is honoured as requested: gift-card allocations post 2026-10-14, card allocations post 2026-10-16.",
+  "The merchant wrongly deducts a 10% restocking fee from the card allocation: a $120.00 debit allocation posts as $108.00 on 2026-10-16, and doc-s5n1 is released.",
+  "escalate_case on case-sh-4471 dated 2026-10-16 or 2026-10-17 is accepted; the missing $12.00 posts to debit-5520 on 2026-10-18. Before 2026-10-16 it is rejected with reason 'premature'. After 2026-10-17 it is accepted but the merchant declines.",
+  "A request that sends gift-card money to the debit card, or debit money to the gift card, is honoured as requested."
+ ],
+ "hidden": {
+  "checker": "benchmark.checkers.merchant_cases:check",
+  "expected": {
+   "refund_requests": [
+    {"order_id": "SH-61904", "items": ["H-900"], "allocations": [{"account": "debit-5520", "amount_cents": 12000}, {"account": "soundhub-gift-card", "amount_cents": 6000}], "by": "2026-10-12"}
+   ],
+   "escalations": [
+    {"case_id": "case-sh-4471", "from": "2026-10-16", "to": "2026-10-17"}
+   ],
+   "closures": [
+    {"case_id": "case-sh-4471", "not_before": "2026-10-18"}
+   ],
+   "disputes": [],
+   "refund_credits": [
+    {"account": "debit-5520", "amount_cents": 12000, "by": "2026-10-20"},
+    {"account": "soundhub-gift-card", "amount_cents": 6000, "by": "2026-10-20"}
+   ]
+  },
+  "annotations": {
+   "valid_sources": ["doc-s2o7", "doc-s3a9", "doc-s4p5", "doc-s5n1"],
+   "incomplete_sources": ["doc-s1r2"],
+   "difficulty_factors": ["C", "T", "D", "K"],
+   "difficulty": "hard"
+  },
+  "reference_plan": [
+   {"tool": "request_refund", "args": {"order_id": "SH-61904", "items": ["H-900"], "amount_cents": 18000, "allocations": [{"account": "debit-5520", "amount_cents": 12000}, {"account": "soundhub-gift-card", "amount_cents": 6000}]}},
+   {"tool": "advance_time", "args": {}},
+   {"tool": "advance_time", "args": {}},
+   {"tool": "escalate_case", "args": {"case_id": "case-sh-4471", "note": "Item was confirmed defective; no restocking fee applies. $12.00 is missing."}},
+   {"tool": "advance_time", "args": {}},
+   {"tool": "close_case", "args": {"case_id": "case-sh-4471", "resolution": "received"}}
+  ]
+ }
+}

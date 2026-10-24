@@ -1,0 +1,81 @@
+{
+ "schema_version": 3,
+ "id": "refund_descriptor_reconciliation",
+ "title": "Pending refunds",
+ "instruction": "Check whether my pending refunds actually arrived. Close the ones that did, and follow up on any that didn't.",
+ "start_date": "2026-10-16",
+ "horizon": "2026-10-22",
+ "initial_balance_cents": 143000,
+ "accounts": [
+  {"id": "checking", "label": "Checking account", "kind": "checking"},
+  {"id": "mc-6610", "label": "Mastercard ending 6610", "kind": "credit_card"}
+ ],
+ "documents": [
+  {
+   "id": "doc-h1n4",
+   "title": "Harbor Outfitters: refund issued",
+   "text": "Harbor Outfitters - refund notice\nDate: October 11, 2026\nOrder HO-80412    Refund reference R-204\n\nWe have issued a refund of $62.00 for the returned rain shell to your Mastercard ending 6610. Refunds are processed by our payment partner PayGate and usually appear within 2-5 business days. On your statement, the refund may appear as PAYGATE*HARBOR with reference R-204.",
+   "release_date": null
+  },
+  {
+   "id": "doc-h2d8",
+   "title": "Harbor Outfitters: order status page",
+   "text": "Harbor Outfitters - My orders (page saved October 16, 2026)\nOrder HO-80412\nReturn status: Received\nRefund status: Processing\nRefund amount: $62.00\n\nStatus updates on this page can take up to 10 business days to reflect bank settlement.",
+   "release_date": null
+  },
+  {
+   "id": "doc-l3b5",
+   "title": "Lumen Books: refund approved",
+   "text": "Lumen Books - refund approved\nDate: October 6, 2026\nOrder LB-2207    Refund reference R-311\n\nYour refund of $35.00 for the damaged box set has been approved and will be credited to your Mastercard ending 6610 by October 13, 2026. If it has not arrived by then, reply through your Lumen Books support case and we will look into it.",
+   "release_date": null
+  },
+  {
+   "id": "doc-r6c2",
+   "title": "Card rewards: cashback redeemed",
+   "text": "Mastercard Rewards - redemption confirmation\nDate: October 12, 2026\nYou redeemed 6,200 points for a $62.00 statement credit. The credit will appear on your Mastercard ending 6610 as REWARDS*CASHBACK within 1-2 business days.",
+   "release_date": null
+  }
+ ],
+ "orders": [],
+ "cases": [
+  {"case_id": "case-harbor-r204", "merchant": "Harbor Outfitters", "order_id": "HO-80412", "amount_cents": 6200, "reference": "R-204", "status_shown": "processing", "opened_on": "2026-10-08"},
+  {"case_id": "case-lumen-r311", "merchant": "Lumen Books", "order_id": "LB-2207", "amount_cents": 3500, "reference": "R-311", "status_shown": "approved", "opened_on": "2026-10-06"}
+ ],
+ "transactions": [
+  {"transaction_id": "tx-5512", "date": "2026-10-13", "account": "mc-6610", "amount_cents": 6200, "kind": "rewards", "descriptor": "REWARDS*CASHBACK", "reference": "RDM-6200"},
+  {"transaction_id": "tx-5530", "date": "2026-10-14", "account": "mc-6610", "amount_cents": 6200, "kind": "refund", "descriptor": "PAYGATE*HARBOR", "reference": "R-204"},
+  {"transaction_id": "tx-5541", "date": "2026-10-15", "account": "mc-6610", "amount_cents": -3500, "kind": "purchase", "descriptor": "LUMEN BOOKS", "reference": "LB-2290"}
+ ],
+ "rules": [
+  "escalate_case on case-lumen-r311 is accepted; Lumen replies the next day that the refund will be reissued within 7-10 business days (after the horizon). No money moves during the run.",
+  "escalate_case on case-harbor-r204 is accepted and answered with 'refund already settled as R-204'.",
+  "close_case requires matched_transaction_id for a case closed as received; any transaction id is accepted by the tool.",
+  "request_refund on either case is accepted and declined by the merchant as a duplicate the next day."
+ ],
+ "hidden": {
+  "checker": "benchmark.checkers.merchant_cases:check",
+  "expected": {
+   "refund_requests": [],
+   "escalations": [
+    {"case_id": "case-lumen-r311", "from": "2026-10-16", "to": "2026-10-22"}
+   ],
+   "closures": [
+    {"case_id": "case-harbor-r204", "not_before": "2026-10-16", "matched_transaction_id": "tx-5530"}
+   ],
+   "disputes": [],
+   "refund_credits": []
+  },
+  "annotations": {
+   "valid_sources": ["doc-h1n4", "doc-l3b5"],
+   "superseded_sources": ["doc-h2d8"],
+   "distractor_sources": ["doc-r6c2"],
+   "difficulty_factors": ["C", "E"],
+   "difficulty": "medium"
+  },
+  "reference_plan": [
+   {"tool": "get_activity", "args": {}},
+   {"tool": "close_case", "args": {"case_id": "case-harbor-r204", "resolution": "received", "matched_transaction_id": "tx-5530"}},
+   {"tool": "escalate_case", "args": {"case_id": "case-lumen-r311", "note": "Refund R-311 promised by Oct 13 has not arrived."}}
+  ]
+ }
+}

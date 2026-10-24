@@ -1,0 +1,153 @@
+{
+ "schema_version": 2,
+ "id": "loan_payoff_cleanup",
+ "title": "Car loan paid off",
+ "instruction": "I paid off my car loan last week. Make sure nothing else gets sent to that loan, and don't touch any of my other payments.",
+ "start_date": "2026-10-14",
+ "horizon": "2026-11-25",
+ "initial_balance_cents": 260000,
+ "display_order": [
+  "doc-k2r8",
+  "doc-f9w3",
+  "doc-a6n1"
+ ],
+ "documents": [
+  {
+   "id": "doc-f9w3",
+   "title": "Prairie State Credit Union: loan payoff confirmation",
+   "text": "Prairie State Credit Union - loan payoff confirmation\nDate: October 10, 2026\nMember: Jordan Lee\nAuto loan account ending 2231\n\nWe received your payoff payment of $4,212.66 on October 9, 2026. Your auto loan is paid in full and the account is closed. The lien release for your vehicle will be mailed within 10 business days.\n\nPlease stop any automatic or scheduled payments to loan account 2231. Payments received after the payoff date are not applied to any balance; they are refunded by check within 30 days.\n\nThis notice concerns loan account 2231 only. Your savings and checking accounts with Prairie State Credit Union are not affected.",
+   "release_date": null
+  },
+  {
+   "id": "doc-k2r8",
+   "title": "Bill Pay: upcoming scheduled payments",
+   "text": "Bill Pay - upcoming scheduled payments as of October 14, 2026\n\nsp-0471  Prairie State CU auto loan 2231    $300.00   October 20, 2026\nsp-0472  Prairie State CU savings 7790      $300.00   October 25, 2026\nsp-0473  Maple Court rent, Unit 4B          $1,400.00 November 1, 2026\nsp-0474  Prairie State CU auto loan 2231    $300.00   November 20, 2026\n\nEach payment was set up by you. You can cancel a scheduled payment at any time before its payment date.",
+   "release_date": null
+  },
+  {
+   "id": "doc-a6n1",
+   "title": "Note to self: monthly savings",
+   "text": "Note (September 3, 2026): Set up a $300 monthly transfer to my Prairie State CU savings account (ending 7790) on the 25th. Emergency fund goal: $3,600 by next August. Keep this going.",
+   "release_date": null
+  }
+ ],
+ "bills": [
+  {
+   "id": "ps-loan-2231",
+   "payee": "Prairie State CU auto loan 2231",
+   "amount_cents": 30000,
+   "due_date": "2026-10-20",
+   "document_id": "doc-k2r8"
+  },
+  {
+   "id": "ps-sav-7790",
+   "payee": "Prairie State CU savings 7790",
+   "amount_cents": 30000,
+   "due_date": "2026-10-25",
+   "document_id": "doc-k2r8"
+  },
+  {
+   "id": "mc-rent-4b",
+   "payee": "Maple Court rent, Unit 4B",
+   "amount_cents": 140000,
+   "due_date": "2026-11-01",
+   "document_id": "doc-k2r8"
+  }
+ ],
+ "events": [],
+ "initial_history": {
+  "payments": [],
+  "failed_payments": [],
+  "pending": [
+   {
+    "instruction_id": "sp-0471",
+    "bill_id": "ps-loan-2231",
+    "date": "2026-10-20",
+    "amount_cents": 30000,
+    "created_on": "2026-06-12",
+    "origin": "seeded"
+   },
+   {
+    "instruction_id": "sp-0472",
+    "bill_id": "ps-sav-7790",
+    "date": "2026-10-25",
+    "amount_cents": 30000,
+    "created_on": "2026-09-03",
+    "origin": "seeded"
+   },
+   {
+    "instruction_id": "sp-0473",
+    "bill_id": "mc-rent-4b",
+    "date": "2026-11-01",
+    "amount_cents": 140000,
+    "created_on": "2026-09-28",
+    "origin": "seeded"
+   },
+   {
+    "instruction_id": "sp-0474",
+    "bill_id": "ps-loan-2231",
+    "date": "2026-11-20",
+    "amount_cents": 30000,
+    "created_on": "2026-06-12",
+    "origin": "seeded"
+   }
+  ]
+ },
+ "hidden": {
+  "obligations": [
+   {
+    "id": "savings-transfer",
+    "records": ["ps-sav-7790"],
+    "amount_cents": 30000,
+    "due_date": "2026-10-25",
+    "must_pay": true
+   },
+   {
+    "id": "rent-november",
+    "records": ["mc-rent-4b"],
+    "amount_cents": 140000,
+    "due_date": "2026-11-01",
+    "must_pay": true
+   },
+   {
+    "id": "closed-loan",
+    "records": ["ps-loan-2231"],
+    "amount_cents": 0,
+    "due_date": null,
+    "must_pay": false,
+    "must_not_pay": true
+   }
+  ],
+  "checker": "benchmark.checkers.loan_payoff:check",
+  "checker_params": {
+   "stale_instruction_ids": ["sp-0471", "sp-0474"],
+   "protected_instruction_ids": ["sp-0472", "sp-0473"]
+  },
+  "annotations": {
+   "valid_sources": ["doc-f9w3", "doc-k2r8"],
+   "lookalike_records": ["ps-sav-7790"],
+   "difficulty_factors": ["E"],
+   "difficulty": "easy"
+  },
+  "document_claims": [],
+  "reference_plan": [
+   {
+    "tool": "cancel_scheduled_payment",
+    "args": {"instruction_id": "sp-0471"}
+   },
+   {
+    "tool": "cancel_scheduled_payment",
+    "args": {"instruction_id": "sp-0474"}
+   }
+  ],
+  "floor_expected": {
+   "P0_noop": "fail",
+   "P1_last_allowed_date": "fail",
+   "P2_greedy": "fail",
+   "P3_pay_all_now": "fail",
+   "P4_newest_document": "fail",
+   "P5_oldest_document": "fail",
+   "P6_open_loop": "pass"
+  }
+ }
+}

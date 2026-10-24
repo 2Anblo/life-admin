@@ -1,0 +1,74 @@
+{
+ "schema_version": 3,
+ "id": "duplicate_charge_dispute",
+ "title": "Restaurant charge",
+ "instruction": "I think a restaurant charged me twice last week. Dispute whatever's wrong, but nothing that's legit.",
+ "start_date": "2026-10-12",
+ "horizon": "2026-10-20",
+ "initial_balance_cents": 87000,
+ "accounts": [
+  {"id": "checking", "label": "Checking account", "kind": "checking"},
+  {"id": "visa-3157", "label": "Visa ending 3157", "kind": "credit_card"}
+ ],
+ "documents": [
+  {
+   "id": "doc-d1l5",
+   "title": "Luna Bistro: dinner receipt",
+   "text": "Luna Bistro - guest receipt\nOctober 8, 2026  7:42 PM    Check #4418    Table 12, 2 guests\nFood and drink: $40.50\nTax: $3.70\nTip: $4.00\nTotal charged: $48.20\nVisa ending 3157\nThank you!",
+   "release_date": null
+  },
+  {
+   "id": "doc-d2l6",
+   "title": "Luna Bistro: coffee receipt",
+   "text": "Luna Bistro - counter receipt\nOctober 9, 2026  8:05 AM    Check #4431\nOat latte, almond croissant\nTotal charged: $12.00\nVisa ending 3157",
+   "release_date": null
+  },
+  {
+   "id": "doc-d3g2",
+   "title": "Ironworks Gym: membership",
+   "text": "Ironworks Gym - membership agreement summary\nMember since: June 8, 2026\nPlan: Standard monthly, $48.20 per month including tax, charged on the 8th of each month to Visa ending 3157.",
+   "release_date": null
+  },
+  {
+   "id": "doc-d4v9",
+   "title": "Visa: how to dispute a charge",
+   "text": "Visa ending 3157 - disputing a charge\nUse open_dispute with the transaction ID and a reason: duplicate, not_received, incorrect_amount, or unauthorized. Dispute only the specific transaction that is wrong. A dispute of a valid charge may be reversed and the merchant may close your account.",
+   "release_date": null
+  }
+ ],
+ "orders": [],
+ "cases": [],
+ "transactions": [
+  {"transaction_id": "tx-8790", "date": "2026-09-08", "account": "visa-3157", "amount_cents": -4820, "kind": "purchase", "descriptor": "IRONWORKS GYM", "reference": "MBR-2231"},
+  {"transaction_id": "tx-8811", "date": "2026-10-08", "account": "visa-3157", "amount_cents": -4820, "kind": "purchase", "descriptor": "IRONWORKS GYM", "reference": "MBR-2231"},
+  {"transaction_id": "tx-8812", "date": "2026-10-08", "account": "visa-3157", "amount_cents": -4820, "kind": "purchase", "descriptor": "LUNA BISTRO", "reference": "CHK-4418", "time": "19:42"},
+  {"transaction_id": "tx-8813", "date": "2026-10-08", "account": "visa-3157", "amount_cents": -4820, "kind": "purchase", "descriptor": "LUNA BISTRO", "reference": "CHK-4418", "time": "19:42"},
+  {"transaction_id": "tx-8820", "date": "2026-10-09", "account": "visa-3157", "amount_cents": -1200, "kind": "purchase", "descriptor": "LUNA BISTRO", "reference": "CHK-4431", "time": "08:05"}
+ ],
+ "rules": [
+  "open_dispute on any transaction is accepted and recorded. A duplicate dispute on tx-8812 or tx-8813 results in a provisional $48.20 credit (kind 'dispute_credit') on 2026-10-14.",
+  "Disputes on valid charges are accepted by the tool and later reversed after the horizon."
+ ],
+ "hidden": {
+  "checker": "benchmark.checkers.merchant_cases:check",
+  "expected": {
+   "refund_requests": [],
+   "escalations": [],
+   "closures": [],
+   "disputes": [
+    {"transaction_ids": ["tx-8812", "tx-8813"], "reason": "duplicate"}
+   ],
+   "refund_credits": []
+  },
+  "annotations": {
+   "valid_sources": ["doc-d1l5"],
+   "lookalike_transactions": ["tx-8811", "tx-8820", "tx-8790"],
+   "difficulty_factors": ["E"],
+   "difficulty": "easy"
+  },
+  "reference_plan": [
+   {"tool": "get_activity", "args": {}},
+   {"tool": "open_dispute", "args": {"transaction_id": "tx-8813", "reason": "duplicate"}}
+  ]
+ }
+}
