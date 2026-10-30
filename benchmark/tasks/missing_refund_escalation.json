@@ -33,27 +33,89 @@
  ],
  "orders": [],
  "cases": [
-  {"case_id": "case-cv-118", "merchant": "Corvid Audio", "order_id": "CV-3302", "amount_cents": 14000, "status_shown": "processed", "promised_by": "2026-10-15", "opened_on": "2026-10-03"},
-  {"case_id": "case-pf-552", "merchant": "Pinefield Home", "order_id": "PF-7718", "amount_cents": 9500, "status_shown": "processed", "promised_by": "2026-10-15", "opened_on": "2026-10-05"}
+  {
+   "case_id": "case-cv-118",
+   "merchant": "Corvid Audio",
+   "order_id": "CV-3302",
+   "amount_cents": 14000,
+   "status_shown": "processed",
+   "promised_by": "2026-10-15",
+   "opened_on": "2026-10-03"
+  },
+  {
+   "case_id": "case-pf-552",
+   "merchant": "Pinefield Home",
+   "order_id": "PF-7718",
+   "amount_cents": 9500,
+   "status_shown": "processed",
+   "promised_by": "2026-10-15",
+   "opened_on": "2026-10-05"
+  }
  ],
  "transactions": [
-  {"transaction_id": "tx-8102", "date": "2026-09-28", "account": "debit-7734", "amount_cents": -14000, "kind": "purchase", "descriptor": "CORVID AUDIO", "reference": "CV-3302"},
-  {"transaction_id": "tx-8107", "date": "2026-09-30", "account": "visa-2086", "amount_cents": -9500, "kind": "purchase", "descriptor": "PINEFIELD HOME", "reference": "PF-7718"}
+  {
+   "transaction_id": "tx-8102",
+   "date": "2026-09-28",
+   "account": "debit-7734",
+   "amount_cents": -14000,
+   "kind": "purchase",
+   "descriptor": "CORVID AUDIO",
+   "reference": "CV-3302"
+  },
+  {
+   "transaction_id": "tx-8107",
+   "date": "2026-09-30",
+   "account": "visa-2086",
+   "amount_cents": -9500,
+   "kind": "purchase",
+   "descriptor": "PINEFIELD HOME",
+   "reference": "PF-7718"
+  }
  ],
  "rules": [
   "Pinefield's $95.00 refund posts to visa-2086 on 2026-10-14 (transaction tx-8150).",
   "Corvid's $140.00 refund does not post unless the case is escalated.",
-  "escalate_case on case-cv-118 before 2026-10-16 is rejected with reason 'premature'. On 2026-10-16 or 2026-10-17 it is accepted and $140.00 posts to debit-7734 on 2026-10-18 (transaction tx-8171). After 2026-10-17 it is accepted but the credit posts after the horizon.",
+  "escalate_case on case-cv-118 before 2026-10-16 is rejected with reason 'premature'. On 2026-10-16 or 2026-10-17 it is accepted and $140.00 posts to debit-7734 on 2026-10-18 (transaction tx-8171). After 2026-10-17 it is accepted but the credit posts after the horizon. Nothing happens on 2026-10-16 by itself, so an agent reaches it with advance_time(until).",
   "escalate_case on case-pf-552 is accepted and answered with 'refund already settled'.",
   "request_refund on either case is declined as a duplicate. open_dispute is accepted by the card issuer and recorded."
  ],
+ "simulation": {
+  "postings": [
+   {
+    "date": "2026-10-14",
+    "transaction_id": "tx-8150",
+    "account": "visa-2086",
+    "amount_cents": 9500,
+    "kind": "refund",
+    "descriptor": "PINEFIELD HOME",
+    "reference": "PF-7718"
+   }
+  ],
+  "escalations": {
+   "case-cv-118": {
+    "earliest": "2026-10-16",
+    "latest": "2026-10-17",
+    "effect": {
+     "type": "credit",
+     "date": "2026-10-18",
+     "transaction_id": "tx-8171",
+     "account": "debit-7734",
+     "amount_cents": 14000,
+     "kind": "refund",
+     "descriptor": "CORVID AUDIO",
+     "reference": "CV-3302"
+    },
+    "reply": "Corvid Audio: we found the problem and resent your $140.00 refund. It will post on October 18.",
+    "late_reply": "Corvid Audio: we have resent your refund. Allow 7-10 business days for it to post."
+   },
+   "case-pf-552": {"reply": "Pinefield Home: our records show this refund already settled."}
+  }
+ },
  "hidden": {
   "checker": "benchmark.checkers.merchant_cases:check",
   "expected": {
    "refund_requests": [],
-   "escalations": [
-    {"case_id": "case-cv-118", "from": "2026-10-16", "to": "2026-10-17"}
-   ],
+   "escalations": [{"case_id": "case-cv-118", "from": "2026-10-16", "to": "2026-10-17"}],
    "closures": [
     {"case_id": "case-pf-552", "not_before": "2026-10-14", "matched_transaction_id": "tx-8150"},
     {"case_id": "case-cv-118", "not_before": "2026-10-18", "matched_transaction_id": "tx-8171"}
@@ -73,11 +135,27 @@
   },
   "reference_plan": [
    {"tool": "advance_time", "args": {}},
-   {"tool": "close_case", "args": {"case_id": "case-pf-552", "resolution": "received", "matched_transaction_id": "tx-8150"}},
-   {"tool": "advance_time", "args": {}},
+   {
+    "tool": "close_case",
+    "args": {"case_id": "case-pf-552", "resolution": "received", "matched_transaction_id": "tx-8150"}
+   },
+   {"tool": "advance_time", "args": {"until": "2026-10-16"}},
    {"tool": "escalate_case", "args": {"case_id": "case-cv-118", "note": "Refund promised by Oct 15 has not arrived."}},
    {"tool": "advance_time", "args": {}},
-   {"tool": "close_case", "args": {"case_id": "case-cv-118", "resolution": "received", "matched_transaction_id": "tx-8171"}}
-  ]
+   {
+    "tool": "close_case",
+    "args": {"case_id": "case-cv-118", "resolution": "received", "matched_transaction_id": "tx-8171"}
+   }
+  ],
+  "floor_expected": {
+   "P0_noop": "fail",
+   "P1_last_allowed_date": "fail",
+   "P2_greedy": "fail",
+   "P3_pay_all_now": "fail",
+   "P4_newest_document": "fail",
+   "P5_oldest_document": "fail",
+   "P6_open_loop": "fail",
+   "P7_act_on_everything": "fail"
+  }
  }
 }

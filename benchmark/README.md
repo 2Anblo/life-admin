@@ -4,30 +4,27 @@ The benchmark is planned as 20 original, objectively checkable personal-administ
 
 `tasks/` will hold task fixtures. `checkers/` will hold independent scoring code. These should work without the LifeAdmin agent so another agent can be evaluated against the same environment.
 
-The first fixture, `tasks/avoid_late_fees.json`, specifies three bills, one incoming deposit, and a September 28 evaluation horizon. `checkers/bill_payment.py` verifies that all bills settled once, on time, for the correct amount, without overdraft. This is one of the planned 20 distinct tasks; the remaining tasks and common runner are not yet implemented.
+The first fixture, `tasks/avoid_late_fees.json`, specifies three bills, one incoming deposit, and a September 28 evaluation horizon. `checkers/bill_payment.py` verifies that all bills settled once, on time, for the correct amount, without overdraft. It is the first of the 20 tasks.
 
-## Subscription tasks
+## Running the tasks
 
-`cancel_unused_subscriptions`, `free_trial_conversion`, `price_increase_review`, and `downgrade_by_usage` are scored by `checkers/subscriptions.py`. The simulator does not support them yet. Their fixtures add `subscriptions`, `usage`, `renewal` and `price_change` events, and a hidden `expected` block that is never shown to the agent. The checker requires the simulator's final result to include `subscriptions` (status, plan, `cancelled_on`) and an exact list of executed `charges`. `tests/test_subscription_checkers.py` checks each task's correct final state and the plausible wrong ones.
+All tasks except `avoid_late_fees` (which keeps the v1 simulator) run on `LifeWorkspace` (`src/lifeadmin/simulator/workspace_v3.py`). It extends the v2 payment workspace with subscriptions, refund cases, card disputes and reminders, and every task gets the same tool set (`src/lifeadmin/agent/tools_v3.py`), so the tools on offer never hint at the task type. `python run_task.py benchmark/tasks/<task>.json` runs the reference plan and every floor policy on one task.
 
-## Tasks 11-20
+A fixture's prose `rules` describe the environment for readers; its `simulation` block is the machine-readable form the workspace uses (refund posting dates, amounts withheld, escalation windows and replies, scheduled card postings, dispute credits). The agent sees neither, nor anything under `hidden`.
 
-Two more v2 payment tasks run end to end on the current simulator, with reference plans, floor-policy expectations, and trace tests in `tests/test_easy_payment_tasks.py`:
+Shared environment rules for the new task types:
 
-- `credit_card_statement_balance` (`checkers/statement_balance.py`): pay the statement balance, not the minimum shown in Bill Pay or the current balance.
-- `loan_payoff_cleanup` (`checkers/loan_payoff.py`): cancel both scheduled payments to a paid-off loan, but keep a look-alike savings transfer to the same credit union and rent.
+- A renewal charges on its date. A cancellation stops it only if made at least `cancel_notice_days` (minimum 1) days earlier; a later cancellation is accepted but that renewal still charges. A plan change applies from the next renewal.
+- Refund requests are accepted when submitted and decided by the merchant afterwards. Approved money posts later as a card transaction; an ineligible request is declined the next day by a notice document. Each returned item is refunded once.
+- An escalation before the merchant's window is rejected and logged with reason `premature`; one after the window is accepted but changes nothing.
+- Bills and documents can appear during the run. `advance_time` takes an optional `until` date for waiting when nothing is scheduled.
 
-Eight tasks use `schema_version: 3`. The simulator does not support them yet. Each fixture lists accounts, orders, cases, past transactions, and a `rules` list describing how the environment must respond, so the simulator can be built from the fixture. The hidden `expected` block is scored by an independent checker that reads a final `result` (format documented at the top of each checker):
+## Validation
 
-| Task | Checker | Needs tools |
-|---|---|---|
-| `refund_within_return_window` | `checkers/merchant_cases.py` | `request_refund` |
-| `refund_descriptor_reconciliation` | `checkers/merchant_cases.py` | `close_case`, `escalate_case` |
-| `partial_refund_with_fee` | `checkers/merchant_cases.py` | `request_refund` |
-| `split_tender_refund` | `checkers/merchant_cases.py` | `request_refund`, `escalate_case`, `close_case` |
-| `missing_refund_escalation` | `checkers/merchant_cases.py` | `escalate_case`, `close_case` |
-| `duplicate_charge_dispute` | `checkers/merchant_cases.py` | `open_dispute` |
-| `renewal_reminders` | `checkers/reminders.py` | `create_reminder` |
-| `move_out_closeout` | `checkers/move_out.py` | bill tools plus `cancel_subscription` |
+Every task's reference plan passes in the simulator, and replaying its tool calls reproduces both snapshots. Eight floor policies run on all 19 tasks: P0-P5 and P7 (pay every bill, cancel every subscription, escalate and close every case, dispute every charge) fail all of them. P6 replays the reference plan but stops at the first `advance_time`; it fails the four tasks that need information released during the run (`replace_schedule`, `split_tender_refund`, `missing_refund_escalation`, `move_out_closeout`). Each fixture records these outcomes in `hidden.floor_expected`.
 
-`tests/test_case_task_checkers.py` checks each task's correct final result and the specific mistakes the task is designed to catch. `run_task.py` only runs v2 tasks.
+| Area | Tests |
+|---|---|
+| Payment tasks | `tests/test_payment_tasks.py`, `tests/test_easy_payment_tasks.py` |
+| Subscription, refund, dispute, reminder and move-out tasks | `tests/test_life_tasks.py` (traces), `tests/test_subscription_checkers.py`, `tests/test_case_task_checkers.py` (hand-built results) |
+| Workspace mechanics | `tests/test_core_v2.py`, `tests/test_workspace_v3.py` |

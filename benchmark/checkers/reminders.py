@@ -1,6 +1,6 @@
 """Independent checker for reminder tasks (schema_version 3).
 
-The simulator does not support reminders yet. ``result`` must contain:
+``result`` (the final snapshot S_h) must contain:
 
 - ``date``: final simulated date; must equal the task horizon.
 - ``actions``: agent tool calls as ``{"date", "tool", "args", "outcome"}``.

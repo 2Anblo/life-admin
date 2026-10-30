@@ -1,7 +1,7 @@
 """Independent checker for refund and dispute tasks (schema_version 3).
 
-The simulator does not support these tasks yet. The checker reads only the task
-fixture and a final result that a future simulator must produce:
+The checker reads only the task
+fixture and the final snapshot S_h produced by LifeWorkspace:
 
 - ``date``: final simulated date; must equal the task horizon.
 - ``actions``: every agent tool call in order, as

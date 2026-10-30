@@ -1,6 +1,6 @@
 """Independent checker for move_out_closeout (schema_version 3; bills and subscriptions together).
 
-The simulator does not support this task yet. ``result`` must contain:
+``result`` (the final snapshot S_h) must contain:
 
 - ``date``: final simulated date; must equal the task horizon.
 - ``min_balance_cents``: lowest balance reached during the run.

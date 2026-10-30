@@ -55,7 +55,15 @@
  ],
  "cases": [],
  "transactions": [
-  {"transaction_id": "tx-3301", "date": "2026-10-02", "account": "visa-4421", "amount_cents": -9250, "kind": "purchase", "descriptor": "BRIGHTWAY HOME", "reference": "BW-55120"}
+  {
+   "transaction_id": "tx-3301",
+   "date": "2026-10-02",
+   "account": "visa-4421",
+   "amount_cents": -9250,
+   "kind": "purchase",
+   "descriptor": "BRIGHTWAY HOME",
+   "reference": "BW-55120"
+  }
  ],
  "refund_policy": {
   "default_destination": "brightway-store-credit",
@@ -66,18 +74,24 @@
   "request_refund for an item that has not been received is accepted by the form but declined by the merchant the next day with a notice; no money moves.",
   "A second request for an item already refunded is accepted by the form but produces no second refund."
  ],
+ "simulation": {
+  "refunds": {"BW-55120": {"post_after_business_days": 3}}
+ },
  "hidden": {
   "checker": "benchmark.checkers.merchant_cases:check",
   "expected": {
    "refund_requests": [
-    {"order_id": "BW-55120", "items": ["L-208"], "allocations": [{"account": "visa-4421", "amount_cents": 7450}], "by": "2026-10-14"}
+    {
+     "order_id": "BW-55120",
+     "items": ["L-208"],
+     "allocations": [{"account": "visa-4421", "amount_cents": 7450}],
+     "by": "2026-10-14"
+    }
    ],
    "escalations": [],
    "closures": [],
    "disputes": [],
-   "refund_credits": [
-    {"account": "visa-4421", "amount_cents": 7450, "by": "2026-10-20"}
-   ]
+   "refund_credits": [{"account": "visa-4421", "amount_cents": 7450, "by": "2026-10-20"}]
   },
   "annotations": {
    "valid_sources": ["doc-b2c4", "doc-b4p2"],
@@ -86,8 +100,26 @@
    "difficulty": "easy"
   },
   "reference_plan": [
-   {"tool": "request_refund", "args": {"order_id": "BW-55120", "items": ["L-208"], "amount_cents": 7450, "allocations": [{"account": "visa-4421", "amount_cents": 7450}]}},
+   {
+    "tool": "request_refund",
+    "args": {
+     "order_id": "BW-55120",
+     "items": ["L-208"],
+     "amount_cents": 7450,
+     "allocations": [{"account": "visa-4421", "amount_cents": 7450}]
+    }
+   },
    {"tool": "advance_time", "args": {}}
-  ]
+  ],
+  "floor_expected": {
+   "P0_noop": "fail",
+   "P1_last_allowed_date": "fail",
+   "P2_greedy": "fail",
+   "P3_pay_all_now": "fail",
+   "P4_newest_document": "fail",
+   "P5_oldest_document": "fail",
+   "P6_open_loop": "pass",
+   "P7_act_on_everything": "fail"
+  }
  }
 }
