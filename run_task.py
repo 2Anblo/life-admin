@@ -1,4 +1,4 @@
-"""Run one v2 task with a scripted policy, the reference plan, or a Tinker model.
+"""Run one task (any fixture except avoid_late_fees, which runs on v1) with a scripted policy, the reference plan, or a Tinker model.
 
     python run_task.py benchmark/tasks/<task>.json                 # every floor policy + reference
     python run_task.py benchmark/tasks/<task>.json --agent P1_last_allowed_date
