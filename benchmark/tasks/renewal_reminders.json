@@ -38,7 +38,15 @@
  "orders": [],
  "cases": [],
  "transactions": [
-  {"transaction_id": "tx-9402", "date": "2026-10-18", "account": "checking", "amount_cents": -12000, "kind": "bill_payment", "descriptor": "BRIGHT SMILE DENTAL", "reference": "STMT 2026-10-06"}
+  {
+   "transaction_id": "tx-9402",
+   "date": "2026-10-18",
+   "account": "checking",
+   "amount_cents": -12000,
+   "kind": "bill_payment",
+   "descriptor": "BRIGHT SMILE DENTAL",
+   "reference": "STMT 2026-10-06"
+  }
  ],
  "rules": [
   "create_reminder(date, text) is accepted for any date after today and stores the reminder; reminders cannot be deleted in this task.",
@@ -46,9 +54,7 @@
  ],
  "hidden": {
   "checker": "benchmark.checkers.reminders:check",
-  "expected": {
-   "reminder_dates": ["2026-10-25", "2026-11-12"]
-  },
+  "expected": {"reminder_dates": ["2026-10-25", "2026-11-12"]},
   "annotations": {
    "valid_sources": ["doc-i1r4", "doc-v2g7"],
    "superseded_sources": ["doc-i0r1"],
@@ -57,8 +63,24 @@
    "difficulty": "medium"
   },
   "reference_plan": [
-   {"tool": "create_reminder", "args": {"date": "2026-10-25", "text": "Car insurance (Keystone) renews Nov 1 - shop around for quotes."}},
-   {"tool": "create_reminder", "args": {"date": "2026-11-12", "text": "Vehicle registration (plate 7KTR229) expires Nov 15 - renew online."}}
-  ]
+   {
+    "tool": "create_reminder",
+    "args": {"date": "2026-10-25", "text": "Car insurance (Keystone) renews Nov 1 - shop around for quotes."}
+   },
+   {
+    "tool": "create_reminder",
+    "args": {"date": "2026-11-12", "text": "Vehicle registration (plate 7KTR229) expires Nov 15 - renew online."}
+   }
+  ],
+  "floor_expected": {
+   "P0_noop": "fail",
+   "P1_last_allowed_date": "fail",
+   "P2_greedy": "fail",
+   "P3_pay_all_now": "fail",
+   "P4_newest_document": "fail",
+   "P5_oldest_document": "fail",
+   "P6_open_loop": "pass",
+   "P7_act_on_everything": "fail"
+  }
  }
 }

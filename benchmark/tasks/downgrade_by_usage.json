@@ -1,41 +1,110 @@
 {
-  "id": "downgrade_by_usage",
-  "title": "Switch each service to the cheapest plan that covers recent usage",
-  "start_date": "2026-10-01",
-  "horizon": "2026-10-31",
-  "initial_balance_cents": 50000,
-  "documents": [
-    {"id": "user-note", "text": "Note from Sam (October 1, 2026): I think I am overpaying. For each service below, switch to the cheapest plan that would have covered every one of the last three months (July, August, September). Do not cancel anything. Plan changes apply from the next renewal if made before the renewal date."},
-    {"id": "plans-northwind", "text": "Northwind Mobile plans: 5 GB data $25.00/month; 15 GB data $40.00/month; Unlimited data $60.00/month. You are on Unlimited. Next renewal October 10, 2026."},
-    {"id": "plans-photovault", "text": "PhotoVault Cloud plans: 200 GB storage $2.99/month; 2 TB storage $9.99/month. You are on 2 TB. Next renewal October 3, 2026."},
-    {"id": "plans-streamflix", "text": "Streamflix plans: Basic with Ads, 1 screen at a time, $7.99/month; Standard, 2 screens at a time, $15.49/month; Premium, 4 screens at a time, $22.99/month. You are on Premium. Next renewal October 12, 2026."}
-  ],
-  "subscriptions": [
-    {"id": "northwind", "name": "Northwind Mobile", "document_id": "plans-northwind", "plan": "unlimited", "plans": {"5gb": {"price_cents": 2500, "data_gb": 5}, "15gb": {"price_cents": 4000, "data_gb": 15}, "unlimited": {"price_cents": 6000, "data_gb": null}}, "billing_period": "monthly", "cancel_notice_days": 0},
-    {"id": "photovault", "name": "PhotoVault Cloud", "document_id": "plans-photovault", "plan": "2tb", "plans": {"200gb": {"price_cents": 299, "storage_gb": 200}, "2tb": {"price_cents": 999, "storage_gb": 2000}}, "billing_period": "monthly", "cancel_notice_days": 0},
-    {"id": "streamflix", "name": "Streamflix", "document_id": "plans-streamflix", "plan": "premium", "plans": {"basic_ads": {"price_cents": 799, "screens": 1}, "standard": {"price_cents": 1549, "screens": 2}, "premium": {"price_cents": 2299, "screens": 4}}, "billing_period": "monthly", "cancel_notice_days": 0}
-  ],
-  "usage": {
-    "northwind": {"data_gb_by_month": {"2026-07": 4.1, "2026-08": 13.8, "2026-09": 4.6}},
-    "photovault": {"storage_used_gb_by_month": {"2026-07": 187, "2026-08": 199, "2026-09": 212}},
-    "streamflix": {"max_simultaneous_screens_by_month": {"2026-07": 2, "2026-08": 1, "2026-09": 2}}
+ "schema_version": 3,
+ "id": "downgrade_by_usage",
+ "title": "Switch each service to the cheapest plan that covers recent usage",
+ "instruction": "I think I am overpaying. For each of my services, switch to the cheapest plan that would have covered every one of the last three months (July, August, September). Do not cancel anything. Plan changes apply from the next renewal if made before the renewal date.",
+ "start_date": "2026-10-01",
+ "horizon": "2026-10-31",
+ "initial_balance_cents": 50000,
+ "accounts": [
+  {"id": "checking", "label": "Checking account", "kind": "checking"}
+ ],
+ "documents": [
+  {
+   "id": "plans-northwind",
+   "title": "Northwind Mobile plans",
+   "text": "Northwind Mobile plans: 5 GB data $25.00/month; 15 GB data $40.00/month; Unlimited data $60.00/month. You are on Unlimited. Next renewal October 10, 2026.",
+   "release_date": null
   },
-  "events": [
-    {"id": "renew-photovault", "date": "2026-10-03", "type": "renewal", "subscription_id": "photovault"},
-    {"id": "renew-northwind", "date": "2026-10-10", "type": "renewal", "subscription_id": "northwind"},
-    {"id": "renew-streamflix", "date": "2026-10-12", "type": "renewal", "subscription_id": "streamflix"}
-  ],
+  {
+   "id": "plans-photovault",
+   "title": "PhotoVault Cloud plans",
+   "text": "PhotoVault Cloud plans: 200 GB storage $2.99/month; 2 TB storage $9.99/month. You are on 2 TB. Next renewal October 3, 2026.",
+   "release_date": null
+  },
+  {
+   "id": "plans-streamflix",
+   "title": "Streamflix plans",
+   "text": "Streamflix plans: Basic with Ads, 1 screen at a time, $7.99/month; Standard, 2 screens at a time, $15.49/month; Premium, 4 screens at a time, $22.99/month. You are on Premium. Next renewal October 12, 2026.",
+   "release_date": null
+  }
+ ],
+ "bills": [],
+ "subscriptions": [
+  {
+   "id": "northwind",
+   "name": "Northwind Mobile",
+   "document_id": "plans-northwind",
+   "plan": "unlimited",
+   "plans": {
+    "5gb": {"price_cents": 2500, "data_gb": 5},
+    "15gb": {"price_cents": 4000, "data_gb": 15},
+    "unlimited": {"price_cents": 6000, "data_gb": null}
+   },
+   "billing_period": "monthly",
+   "cancel_notice_days": 0
+  },
+  {
+   "id": "photovault",
+   "name": "PhotoVault Cloud",
+   "document_id": "plans-photovault",
+   "plan": "2tb",
+   "plans": {"200gb": {"price_cents": 299, "storage_gb": 200}, "2tb": {"price_cents": 999, "storage_gb": 2000}},
+   "billing_period": "monthly",
+   "cancel_notice_days": 0
+  },
+  {
+   "id": "streamflix",
+   "name": "Streamflix",
+   "document_id": "plans-streamflix",
+   "plan": "premium",
+   "plans": {
+    "basic_ads": {"price_cents": 799, "screens": 1},
+    "standard": {"price_cents": 1549, "screens": 2},
+    "premium": {"price_cents": 2299, "screens": 4}
+   },
+   "billing_period": "monthly",
+   "cancel_notice_days": 0
+  }
+ ],
+ "usage": {
+  "northwind": {"data_gb_by_month": {"2026-07": 4.1, "2026-08": 13.8, "2026-09": 4.6}},
+  "photovault": {"storage_used_gb_by_month": {"2026-07": 187, "2026-08": 199, "2026-09": 212}},
+  "streamflix": {"max_simultaneous_screens_by_month": {"2026-07": 2, "2026-08": 1, "2026-09": 2}}
+ },
+ "events": [
+  {"id": "renew-photovault", "date": "2026-10-03", "type": "renewal", "subscription_id": "photovault"},
+  {"id": "renew-northwind", "date": "2026-10-10", "type": "renewal", "subscription_id": "northwind"},
+  {"id": "renew-streamflix", "date": "2026-10-12", "type": "renewal", "subscription_id": "streamflix"}
+ ],
+ "hidden": {
+  "checker": "benchmark.checkers.subscriptions:check",
   "goal": "Each service ends on the cheapest plan that covers all three recent months, changed before its next renewal, with nothing cancelled.",
   "expected": {
-    "subscriptions": {
-      "northwind": {"status": "active", "plan": "15gb"},
-      "photovault": {"status": "active", "plan": "2tb"},
-      "streamflix": {"status": "active", "plan": "standard"}
-    },
-    "charges": [
-      {"subscription_id": "photovault", "date": "2026-10-03", "amount_cents": 999},
-      {"subscription_id": "northwind", "date": "2026-10-10", "amount_cents": 4000},
-      {"subscription_id": "streamflix", "date": "2026-10-12", "amount_cents": 1549}
-    ]
+   "subscriptions": {
+    "northwind": {"status": "active", "plan": "15gb"},
+    "photovault": {"status": "active", "plan": "2tb"},
+    "streamflix": {"status": "active", "plan": "standard"}
+   },
+   "charges": [
+    {"subscription_id": "photovault", "date": "2026-10-03", "amount_cents": 999},
+    {"subscription_id": "northwind", "date": "2026-10-10", "amount_cents": 4000},
+    {"subscription_id": "streamflix", "date": "2026-10-12", "amount_cents": 1549}
+   ]
+  },
+  "reference_plan": [
+   {"tool": "change_plan", "args": {"subscription_id": "northwind", "plan": "15gb"}},
+   {"tool": "change_plan", "args": {"subscription_id": "streamflix", "plan": "standard"}}
+  ],
+  "floor_expected": {
+   "P0_noop": "fail",
+   "P1_last_allowed_date": "fail",
+   "P2_greedy": "fail",
+   "P3_pay_all_now": "fail",
+   "P4_newest_document": "fail",
+   "P5_oldest_document": "fail",
+   "P6_open_loop": "pass",
+   "P7_act_on_everything": "fail"
   }
+ }
 }

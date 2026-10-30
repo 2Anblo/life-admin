@@ -132,7 +132,8 @@
    "P3_pay_all_now": "fail",
    "P4_newest_document": "fail",
    "P5_oldest_document": "fail",
-   "P6_open_loop": "pass"
+   "P6_open_loop": "pass",
+   "P7_act_on_everything": "fail"
   },
   "floor_notes": "P6 replays the reference plan without interaction and passes: the task is static, so it tests honoring a user-set window with an advance instruction, not reaction to new information."
  }

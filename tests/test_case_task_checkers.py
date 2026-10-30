@@ -1,4 +1,4 @@
-"""Checker tests for the schema_version 3 tasks that the simulator cannot run yet.
+"""Checker tests for the schema_version 3 tasks on hand-built final results (traces: test_life_tasks.py).
 
 Each task gets a hand-built final result for a correct run (built from the
 task's hidden expectation) and the specific wrong results its traps target.

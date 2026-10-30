@@ -1,51 +1,138 @@
 {
-  "id": "cancel_unused_subscriptions",
-  "title": "Cancel subscriptions unused for 60 days before they renew",
-  "start_date": "2026-10-01",
-  "horizon": "2026-10-31",
-  "initial_balance_cents": 50000,
-  "documents": [
-    {"id": "user-note", "text": "Note from Sam (October 1, 2026): Please go through my subscriptions. Cancel any subscription I have not used in the last 60 days, before it renews again. Keep everything else. Background activity such as automatic backups or syncing counts as using a service."},
-    {"id": "sub-streamflix", "text": "Streamflix Standard: $15.49 per month. Next renewal October 12, 2026."},
-    {"id": "sub-tunebox", "text": "TuneBox Music Individual: $10.99 per month. Next renewal October 8, 2026."},
-    {"id": "sub-fitpath", "text": "FitPath Gym App Premium: $19.99 per month. Next renewal October 20, 2026."},
-    {"id": "sub-dailyledger", "text": "Daily Ledger digital news: $8.00 per month. Next renewal October 15, 2026."},
-    {"id": "sub-photovault", "text": "PhotoVault Cloud 200 GB: $2.99 per month. Next renewal October 3, 2026."}
-  ],
-  "subscriptions": [
-    {"id": "streamflix", "name": "Streamflix", "document_id": "sub-streamflix", "plan": "standard", "plans": {"standard": {"price_cents": 1549}}, "billing_period": "monthly", "cancel_notice_days": 0},
-    {"id": "tunebox", "name": "TuneBox Music", "document_id": "sub-tunebox", "plan": "individual", "plans": {"individual": {"price_cents": 1099}}, "billing_period": "monthly", "cancel_notice_days": 0},
-    {"id": "fitpath", "name": "FitPath Gym App", "document_id": "sub-fitpath", "plan": "premium", "plans": {"premium": {"price_cents": 1999}}, "billing_period": "monthly", "cancel_notice_days": 0},
-    {"id": "dailyledger", "name": "Daily Ledger", "document_id": "sub-dailyledger", "plan": "digital", "plans": {"digital": {"price_cents": 800}}, "billing_period": "monthly", "cancel_notice_days": 0},
-    {"id": "photovault", "name": "PhotoVault Cloud", "document_id": "sub-photovault", "plan": "200gb", "plans": {"200gb": {"price_cents": 299}}, "billing_period": "monthly", "cancel_notice_days": 0}
-  ],
-  "usage": {
-    "streamflix": {"last_login": "2026-09-30", "last_background_activity": null},
-    "tunebox": {"last_login": "2026-07-15", "last_background_activity": null},
-    "fitpath": {"last_login": "2026-07-25", "last_background_activity": null},
-    "dailyledger": {"last_login": "2026-08-10", "last_background_activity": null},
-    "photovault": {"last_login": "2026-06-03", "last_background_activity": "2026-09-30"}
+ "schema_version": 3,
+ "id": "cancel_unused_subscriptions",
+ "title": "Cancel subscriptions unused for 60 days before they renew",
+ "instruction": "Please go through my subscriptions. Cancel any subscription I have not used in the last 60 days, before it renews again. Keep everything else. Background activity such as automatic backups or syncing counts as using a service.",
+ "start_date": "2026-10-01",
+ "horizon": "2026-10-31",
+ "initial_balance_cents": 50000,
+ "accounts": [
+  {"id": "checking", "label": "Checking account", "kind": "checking"}
+ ],
+ "documents": [
+  {
+   "id": "sub-streamflix",
+   "title": "Streamflix Standard",
+   "text": "Streamflix Standard: $15.49 per month. Next renewal October 12, 2026.",
+   "release_date": null
   },
-  "events": [
-    {"id": "renew-photovault", "date": "2026-10-03", "type": "renewal", "subscription_id": "photovault"},
-    {"id": "renew-tunebox", "date": "2026-10-08", "type": "renewal", "subscription_id": "tunebox"},
-    {"id": "renew-streamflix", "date": "2026-10-12", "type": "renewal", "subscription_id": "streamflix"},
-    {"id": "renew-dailyledger", "date": "2026-10-15", "type": "renewal", "subscription_id": "dailyledger"},
-    {"id": "renew-fitpath", "date": "2026-10-20", "type": "renewal", "subscription_id": "fitpath"}
-  ],
+  {
+   "id": "sub-tunebox",
+   "title": "TuneBox Music Individual",
+   "text": "TuneBox Music Individual: $10.99 per month. Next renewal October 8, 2026.",
+   "release_date": null
+  },
+  {
+   "id": "sub-fitpath",
+   "title": "FitPath Gym App Premium",
+   "text": "FitPath Gym App Premium: $19.99 per month. Next renewal October 20, 2026.",
+   "release_date": null
+  },
+  {
+   "id": "sub-dailyledger",
+   "title": "Daily Ledger digital news",
+   "text": "Daily Ledger digital news: $8.00 per month. Next renewal October 15, 2026.",
+   "release_date": null
+  },
+  {
+   "id": "sub-photovault",
+   "title": "PhotoVault Cloud 200 GB",
+   "text": "PhotoVault Cloud 200 GB: $2.99 per month. Next renewal October 3, 2026.",
+   "release_date": null
+  }
+ ],
+ "bills": [],
+ "subscriptions": [
+  {
+   "id": "streamflix",
+   "name": "Streamflix",
+   "document_id": "sub-streamflix",
+   "plan": "standard",
+   "plans": {"standard": {"price_cents": 1549}},
+   "billing_period": "monthly",
+   "cancel_notice_days": 0
+  },
+  {
+   "id": "tunebox",
+   "name": "TuneBox Music",
+   "document_id": "sub-tunebox",
+   "plan": "individual",
+   "plans": {"individual": {"price_cents": 1099}},
+   "billing_period": "monthly",
+   "cancel_notice_days": 0
+  },
+  {
+   "id": "fitpath",
+   "name": "FitPath Gym App",
+   "document_id": "sub-fitpath",
+   "plan": "premium",
+   "plans": {"premium": {"price_cents": 1999}},
+   "billing_period": "monthly",
+   "cancel_notice_days": 0
+  },
+  {
+   "id": "dailyledger",
+   "name": "Daily Ledger",
+   "document_id": "sub-dailyledger",
+   "plan": "digital",
+   "plans": {"digital": {"price_cents": 800}},
+   "billing_period": "monthly",
+   "cancel_notice_days": 0
+  },
+  {
+   "id": "photovault",
+   "name": "PhotoVault Cloud",
+   "document_id": "sub-photovault",
+   "plan": "200gb",
+   "plans": {"200gb": {"price_cents": 299}},
+   "billing_period": "monthly",
+   "cancel_notice_days": 0
+  }
+ ],
+ "usage": {
+  "streamflix": {"last_login": "2026-09-30", "last_background_activity": null},
+  "tunebox": {"last_login": "2026-07-15", "last_background_activity": null},
+  "fitpath": {"last_login": "2026-07-25", "last_background_activity": null},
+  "dailyledger": {"last_login": "2026-08-10", "last_background_activity": null},
+  "photovault": {"last_login": "2026-06-03", "last_background_activity": "2026-09-30"}
+ },
+ "events": [
+  {"id": "renew-photovault", "date": "2026-10-03", "type": "renewal", "subscription_id": "photovault"},
+  {"id": "renew-tunebox", "date": "2026-10-08", "type": "renewal", "subscription_id": "tunebox"},
+  {"id": "renew-streamflix", "date": "2026-10-12", "type": "renewal", "subscription_id": "streamflix"},
+  {"id": "renew-dailyledger", "date": "2026-10-15", "type": "renewal", "subscription_id": "dailyledger"},
+  {"id": "renew-fitpath", "date": "2026-10-20", "type": "renewal", "subscription_id": "fitpath"}
+ ],
+ "hidden": {
+  "checker": "benchmark.checkers.subscriptions:check",
   "goal": "Cancel exactly the subscriptions unused for 60 days, each before its next renewal, and leave the others active.",
   "expected": {
-    "subscriptions": {
-      "streamflix": {"status": "active"},
-      "tunebox": {"status": "cancelled", "cancel_by": "2026-10-07"},
-      "fitpath": {"status": "cancelled", "cancel_by": "2026-10-19"},
-      "dailyledger": {"status": "active"},
-      "photovault": {"status": "active"}
-    },
-    "charges": [
-      {"subscription_id": "photovault", "date": "2026-10-03", "amount_cents": 299},
-      {"subscription_id": "streamflix", "date": "2026-10-12", "amount_cents": 1549},
-      {"subscription_id": "dailyledger", "date": "2026-10-15", "amount_cents": 800}
-    ]
+   "subscriptions": {
+    "streamflix": {"status": "active"},
+    "tunebox": {"status": "cancelled", "cancel_by": "2026-10-07"},
+    "fitpath": {"status": "cancelled", "cancel_by": "2026-10-19"},
+    "dailyledger": {"status": "active"},
+    "photovault": {"status": "active"}
+   },
+   "charges": [
+    {"subscription_id": "photovault", "date": "2026-10-03", "amount_cents": 299},
+    {"subscription_id": "streamflix", "date": "2026-10-12", "amount_cents": 1549},
+    {"subscription_id": "dailyledger", "date": "2026-10-15", "amount_cents": 800}
+   ]
+  },
+  "reference_plan": [
+   {"tool": "cancel_subscription", "args": {"subscription_id": "tunebox"}},
+   {"tool": "cancel_subscription", "args": {"subscription_id": "fitpath"}}
+  ],
+  "floor_expected": {
+   "P0_noop": "fail",
+   "P1_last_allowed_date": "fail",
+   "P2_greedy": "fail",
+   "P3_pay_all_now": "fail",
+   "P4_newest_document": "fail",
+   "P5_oldest_document": "fail",
+   "P6_open_loop": "pass",
+   "P7_act_on_everything": "fail"
   }
+ }
 }

@@ -5,7 +5,11 @@ the visible view and the tools, except where noted: P4 and P5 read
 ``hidden.document_claims`` (what each bill-like document *claims*, not what is
 true), and P6 and the reference policy replay ``hidden.reference_plan``.
 A task counts toward the 20 only if no floor policy solves its stated challenge.
+P7 is the "act on everything" shortcut for the non-payment tasks: it uses only
+what the tools list.
 """
+
+import json
 
 
 def p0_noop(view, call_tool):
@@ -85,6 +89,22 @@ def reference_policy(task, stop_at_first_advance=False):
     return agent
 
 
+def p7_act_on_everything(view, call_tool):
+    """Pay every bill now, cancel every subscription, escalate and close every case, dispute every charge."""
+    for bill in view["bills"]:
+        call_tool("pay_bill", {"bill_id": bill["bill_id"]})
+    for sub in json.loads(call_tool("list_subscriptions", {})[0])["subscriptions"]:
+        call_tool("cancel_subscription", {"subscription_id": sub["subscription_id"]})
+    for case in json.loads(call_tool("list_cases", {})[0])["cases"]:
+        call_tool("escalate_case", {"case_id": case["case_id"]})
+        call_tool("close_case", {"case_id": case["case_id"], "resolution": "received"})
+    activity = json.loads(call_tool("get_activity", {})[0])
+    for tx in activity.get("card_transactions", []):
+        if tx["amount_cents"] < 0 and tx["date"] < view["start_date"]:
+            call_tool("open_dispute", {"transaction_id": tx["transaction_id"], "reason": "duplicate"})
+    return "end_turn"
+
+
 def p6_open_loop(task):
     return reference_policy(task, stop_at_first_advance=True)
 
@@ -98,4 +118,5 @@ def all_floor_policies(task):
         "P4_newest_document": p4_newest_document(task),
         "P5_oldest_document": p5_oldest_document(task),
         "P6_open_loop": p6_open_loop(task),
+        "P7_act_on_everything": p7_act_on_everything,
     }

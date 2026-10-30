@@ -48,24 +48,48 @@
    "order_id": "SH-61904",
    "merchant": "SoundHub",
    "date": "2026-09-30",
-   "items": [
-    {"item_id": "H-900", "name": "Aurora noise-cancelling headphones", "price_cents": 18000}
-   ],
-   "tenders": [
-    {"account": "soundhub-gift-card", "amount_cents": 6000},
-    {"account": "debit-5520", "amount_cents": 12000}
-   ],
+   "items": [{"item_id": "H-900", "name": "Aurora noise-cancelling headphones", "price_cents": 18000}],
+   "tenders": [{"account": "soundhub-gift-card", "amount_cents": 6000}, {"account": "debit-5520", "amount_cents": 12000}],
    "returns": [
-    {"rma": "case-sh-4471", "item_id": "H-900", "status": "received", "received_on": "2026-10-10", "condition": "defective"}
+    {
+     "rma": "case-sh-4471",
+     "item_id": "H-900",
+     "status": "received",
+     "received_on": "2026-10-10",
+     "condition": "defective"
+    }
    ]
   }
  ],
  "cases": [
-  {"case_id": "case-sh-4471", "merchant": "SoundHub", "order_id": "SH-61904", "amount_cents": 18000, "status_shown": "return accepted", "opened_on": "2026-10-10"}
+  {
+   "case_id": "case-sh-4471",
+   "merchant": "SoundHub",
+   "order_id": "SH-61904",
+   "amount_cents": 18000,
+   "status_shown": "return accepted",
+   "opened_on": "2026-10-10"
+  }
  ],
  "transactions": [
-  {"transaction_id": "tx-6011", "date": "2026-09-30", "account": "debit-5520", "amount_cents": -12000, "kind": "purchase", "descriptor": "SOUNDHUB", "reference": "SH-61904"},
-  {"transaction_id": "tx-6012", "date": "2026-09-30", "account": "soundhub-gift-card", "amount_cents": -6000, "kind": "purchase", "descriptor": "SOUNDHUB GIFT CARD", "reference": "SH-61904"}
+  {
+   "transaction_id": "tx-6011",
+   "date": "2026-09-30",
+   "account": "debit-5520",
+   "amount_cents": -12000,
+   "kind": "purchase",
+   "descriptor": "SOUNDHUB",
+   "reference": "SH-61904"
+  },
+  {
+   "transaction_id": "tx-6012",
+   "date": "2026-09-30",
+   "account": "soundhub-gift-card",
+   "amount_cents": -6000,
+   "kind": "purchase",
+   "descriptor": "SOUNDHUB GIFT CARD",
+   "reference": "SH-61904"
+  }
  ],
  "refund_policy": {
   "default_destination": "debit-5520",
@@ -77,18 +101,36 @@
   "escalate_case on case-sh-4471 dated 2026-10-16 or 2026-10-17 is accepted; the missing $12.00 posts to debit-5520 on 2026-10-18. Before 2026-10-16 it is rejected with reason 'premature'. After 2026-10-17 it is accepted but the merchant declines.",
   "A request that sends gift-card money to the debit card, or debit money to the gift card, is honoured as requested."
  ],
+ "simulation": {
+  "refunds": {
+   "SH-61904": {
+    "post_dates_by_account_kind": {"gift_card": "2026-10-14", "default": "2026-10-16"},
+    "withhold": {"percent": 10, "account_kinds": ["debit_card", "credit_card"], "case_id": "case-sh-4471"}
+   }
+  },
+  "escalations": {
+   "case-sh-4471": {
+    "earliest": "2026-10-16",
+    "latest": "2026-10-17",
+    "effect": {"type": "pay_withheld", "date": "2026-10-18"},
+    "reply": "SoundHub: we're sorry. No restocking fee applies to items confirmed defective. We will refund the fee to your card on October 18.",
+    "late_reply": "SoundHub: escalations must be made within 2 days of the refund posting. We cannot change this refund."
+   }
+  }
+ },
  "hidden": {
   "checker": "benchmark.checkers.merchant_cases:check",
   "expected": {
    "refund_requests": [
-    {"order_id": "SH-61904", "items": ["H-900"], "allocations": [{"account": "debit-5520", "amount_cents": 12000}, {"account": "soundhub-gift-card", "amount_cents": 6000}], "by": "2026-10-12"}
+    {
+     "order_id": "SH-61904",
+     "items": ["H-900"],
+     "allocations": [{"account": "debit-5520", "amount_cents": 12000}, {"account": "soundhub-gift-card", "amount_cents": 6000}],
+     "by": "2026-10-12"
+    }
    ],
-   "escalations": [
-    {"case_id": "case-sh-4471", "from": "2026-10-16", "to": "2026-10-17"}
-   ],
-   "closures": [
-    {"case_id": "case-sh-4471", "not_before": "2026-10-18"}
-   ],
+   "escalations": [{"case_id": "case-sh-4471", "from": "2026-10-16", "to": "2026-10-17"}],
+   "closures": [{"case_id": "case-sh-4471", "not_before": "2026-10-18"}],
    "disputes": [],
    "refund_credits": [
     {"account": "debit-5520", "amount_cents": 12000, "by": "2026-10-20"},
@@ -102,12 +144,33 @@
    "difficulty": "hard"
   },
   "reference_plan": [
-   {"tool": "request_refund", "args": {"order_id": "SH-61904", "items": ["H-900"], "amount_cents": 18000, "allocations": [{"account": "debit-5520", "amount_cents": 12000}, {"account": "soundhub-gift-card", "amount_cents": 6000}]}},
+   {
+    "tool": "request_refund",
+    "args": {
+     "order_id": "SH-61904",
+     "items": ["H-900"],
+     "amount_cents": 18000,
+     "allocations": [{"account": "debit-5520", "amount_cents": 12000}, {"account": "soundhub-gift-card", "amount_cents": 6000}]
+    }
+   },
    {"tool": "advance_time", "args": {}},
    {"tool": "advance_time", "args": {}},
-   {"tool": "escalate_case", "args": {"case_id": "case-sh-4471", "note": "Item was confirmed defective; no restocking fee applies. $12.00 is missing."}},
+   {
+    "tool": "escalate_case",
+    "args": {"case_id": "case-sh-4471", "note": "Item was confirmed defective; no restocking fee applies. $12.00 is missing."}
+   },
    {"tool": "advance_time", "args": {}},
    {"tool": "close_case", "args": {"case_id": "case-sh-4471", "resolution": "received"}}
-  ]
+  ],
+  "floor_expected": {
+   "P0_noop": "fail",
+   "P1_last_allowed_date": "fail",
+   "P2_greedy": "fail",
+   "P3_pay_all_now": "fail",
+   "P4_newest_document": "fail",
+   "P5_oldest_document": "fail",
+   "P6_open_loop": "fail",
+   "P7_act_on_everything": "fail"
+  }
  }
 }

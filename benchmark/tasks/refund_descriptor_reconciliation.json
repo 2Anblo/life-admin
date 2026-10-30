@@ -38,30 +38,72 @@
  ],
  "orders": [],
  "cases": [
-  {"case_id": "case-harbor-r204", "merchant": "Harbor Outfitters", "order_id": "HO-80412", "amount_cents": 6200, "reference": "R-204", "status_shown": "processing", "opened_on": "2026-10-08"},
-  {"case_id": "case-lumen-r311", "merchant": "Lumen Books", "order_id": "LB-2207", "amount_cents": 3500, "reference": "R-311", "status_shown": "approved", "opened_on": "2026-10-06"}
+  {
+   "case_id": "case-harbor-r204",
+   "merchant": "Harbor Outfitters",
+   "order_id": "HO-80412",
+   "amount_cents": 6200,
+   "reference": "R-204",
+   "status_shown": "processing",
+   "opened_on": "2026-10-08"
+  },
+  {
+   "case_id": "case-lumen-r311",
+   "merchant": "Lumen Books",
+   "order_id": "LB-2207",
+   "amount_cents": 3500,
+   "reference": "R-311",
+   "status_shown": "approved",
+   "opened_on": "2026-10-06"
+  }
  ],
  "transactions": [
-  {"transaction_id": "tx-5512", "date": "2026-10-13", "account": "mc-6610", "amount_cents": 6200, "kind": "rewards", "descriptor": "REWARDS*CASHBACK", "reference": "RDM-6200"},
-  {"transaction_id": "tx-5530", "date": "2026-10-14", "account": "mc-6610", "amount_cents": 6200, "kind": "refund", "descriptor": "PAYGATE*HARBOR", "reference": "R-204"},
-  {"transaction_id": "tx-5541", "date": "2026-10-15", "account": "mc-6610", "amount_cents": -3500, "kind": "purchase", "descriptor": "LUMEN BOOKS", "reference": "LB-2290"}
+  {
+   "transaction_id": "tx-5512",
+   "date": "2026-10-13",
+   "account": "mc-6610",
+   "amount_cents": 6200,
+   "kind": "rewards",
+   "descriptor": "REWARDS*CASHBACK",
+   "reference": "RDM-6200"
+  },
+  {
+   "transaction_id": "tx-5530",
+   "date": "2026-10-14",
+   "account": "mc-6610",
+   "amount_cents": 6200,
+   "kind": "refund",
+   "descriptor": "PAYGATE*HARBOR",
+   "reference": "R-204"
+  },
+  {
+   "transaction_id": "tx-5541",
+   "date": "2026-10-15",
+   "account": "mc-6610",
+   "amount_cents": -3500,
+   "kind": "purchase",
+   "descriptor": "LUMEN BOOKS",
+   "reference": "LB-2290"
+  }
  ],
  "rules": [
   "escalate_case on case-lumen-r311 is accepted; Lumen replies the next day that the refund will be reissued within 7-10 business days (after the horizon). No money moves during the run.",
   "escalate_case on case-harbor-r204 is accepted and answered with 'refund already settled as R-204'.",
-  "close_case requires matched_transaction_id for a case closed as received; any transaction id is accepted by the tool.",
+  "close_case accepts an optional matched_transaction_id; any transaction id is accepted by the tool. The checker requires tx-5530 for the Harbor case.",
   "request_refund on either case is accepted and declined by the merchant as a duplicate the next day."
  ],
+ "simulation": {
+  "escalations": {
+   "case-lumen-r311": {"reply": "Lumen Books: we're sorry for the delay. Your refund will be reissued within 7-10 business days."},
+   "case-harbor-r204": {"reply": "Harbor Outfitters: refund R-204 has already settled to your card."}
+  }
+ },
  "hidden": {
   "checker": "benchmark.checkers.merchant_cases:check",
   "expected": {
    "refund_requests": [],
-   "escalations": [
-    {"case_id": "case-lumen-r311", "from": "2026-10-16", "to": "2026-10-22"}
-   ],
-   "closures": [
-    {"case_id": "case-harbor-r204", "not_before": "2026-10-16", "matched_transaction_id": "tx-5530"}
-   ],
+   "escalations": [{"case_id": "case-lumen-r311", "from": "2026-10-16", "to": "2026-10-22"}],
+   "closures": [{"case_id": "case-harbor-r204", "not_before": "2026-10-16", "matched_transaction_id": "tx-5530"}],
    "disputes": [],
    "refund_credits": []
   },
@@ -74,8 +116,24 @@
   },
   "reference_plan": [
    {"tool": "get_activity", "args": {}},
-   {"tool": "close_case", "args": {"case_id": "case-harbor-r204", "resolution": "received", "matched_transaction_id": "tx-5530"}},
-   {"tool": "escalate_case", "args": {"case_id": "case-lumen-r311", "note": "Refund R-311 promised by Oct 13 has not arrived."}}
-  ]
+   {
+    "tool": "close_case",
+    "args": {"case_id": "case-harbor-r204", "resolution": "received", "matched_transaction_id": "tx-5530"}
+   },
+   {
+    "tool": "escalate_case",
+    "args": {"case_id": "case-lumen-r311", "note": "Refund R-311 promised by Oct 13 has not arrived."}
+   }
+  ],
+  "floor_expected": {
+   "P0_noop": "fail",
+   "P1_last_allowed_date": "fail",
+   "P2_greedy": "fail",
+   "P3_pay_all_now": "fail",
+   "P4_newest_document": "fail",
+   "P5_oldest_document": "fail",
+   "P6_open_loop": "pass",
+   "P7_act_on_everything": "fail"
+  }
  }
 }

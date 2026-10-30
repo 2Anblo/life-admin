@@ -27,14 +27,14 @@ def gold_result(task: dict) -> dict:
     """Hand-built final state of a correct run, acting on the start date."""
     initial_plans = {sub["id"]: sub["plan"] for sub in task["subscriptions"]}
     subscriptions = {}
-    for sub_id, want in task["expected"]["subscriptions"].items():
+    for sub_id, want in task["hidden"]["expected"]["subscriptions"].items():
         cancelled = want["status"] == "cancelled"
         subscriptions[sub_id] = {
             "status": want["status"],
             "plan": want.get("plan", initial_plans[sub_id]),
             "cancelled_on": task["start_date"] if cancelled else None,
         }
-    charges = deepcopy(task["expected"]["charges"])
+    charges = deepcopy(task["hidden"]["expected"]["charges"])
     return {
         "date": task["horizon"],
         "balance_cents": task["initial_balance_cents"] - sum(charge["amount_cents"] for charge in charges),
@@ -60,7 +60,7 @@ class FixtureConsistencyTests(unittest.TestCase):
         for task_id in SUBSCRIPTION_TASKS:
             task = load_task(task_id)
             ids = {sub["id"] for sub in task["subscriptions"]}
-            self.assertEqual(set(task["expected"]["subscriptions"]), ids, task_id)
+            self.assertEqual(set(task["hidden"]["expected"]["subscriptions"]), ids, task_id)
             self.assertEqual(task["id"], task_id)
 
     def test_document_ids_exist(self):

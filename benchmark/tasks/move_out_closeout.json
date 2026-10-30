@@ -54,13 +54,50 @@
   }
  ],
  "bills": [
-  {"id": "re-oct", "payee": "Riverbend Electric 66-20417", "amount_cents": 5800, "due_date": "2026-10-28", "document_id": "doc-m2e5"},
-  {"id": "re-final", "payee": "Riverbend Electric 66-20417 (final)", "amount_cents": 4680, "due_date": "2026-11-13", "document_id": "doc-m7f4", "release_date": "2026-11-03"}
+  {
+   "id": "re-oct",
+   "payee": "Riverbend Electric 66-20417",
+   "amount_cents": 5800,
+   "due_date": "2026-10-28",
+   "document_id": "doc-m2e5"
+  },
+  {
+   "id": "re-final",
+   "payee": "Riverbend Electric 66-20417 (final)",
+   "amount_cents": 4680,
+   "due_date": "2026-11-13",
+   "document_id": "doc-m7f4",
+   "release_date": "2026-11-03"
+  }
  ],
  "subscriptions": [
-  {"id": "northline", "name": "Northline Home Internet", "document_id": "doc-m4n3", "plan": "fiber300", "plans": {"fiber300": {"price_cents": 7000}}, "billing_period": "monthly", "cancel_notice_days": 7},
-  {"id": "kestrel", "name": "Kestrel Mobile", "document_id": "doc-m5k7", "plan": "unlimited15", "plans": {"unlimited15": {"price_cents": 4500}}, "billing_period": "monthly", "cancel_notice_days": 0},
-  {"id": "streamflix", "name": "Streamflix", "document_id": "doc-m6s1", "plan": "standard", "plans": {"standard": {"price_cents": 1549}}, "billing_period": "monthly", "cancel_notice_days": 0}
+  {
+   "id": "northline",
+   "name": "Northline Home Internet",
+   "document_id": "doc-m4n3",
+   "plan": "fiber300",
+   "plans": {"fiber300": {"price_cents": 7000}},
+   "billing_period": "monthly",
+   "cancel_notice_days": 7
+  },
+  {
+   "id": "kestrel",
+   "name": "Kestrel Mobile",
+   "document_id": "doc-m5k7",
+   "plan": "unlimited15",
+   "plans": {"unlimited15": {"price_cents": 4500}},
+   "billing_period": "monthly",
+   "cancel_notice_days": 0
+  },
+  {
+   "id": "streamflix",
+   "name": "Streamflix",
+   "document_id": "doc-m6s1",
+   "plan": "standard",
+   "plans": {"standard": {"price_cents": 1549}},
+   "billing_period": "monthly",
+   "cancel_notice_days": 0
+  }
  ],
  "events": [
   {"id": "renew-streamflix", "date": "2026-10-30", "type": "renewal", "subscription_id": "streamflix"},
@@ -104,6 +141,16 @@
    {"tool": "advance_time", "args": {}},
    {"tool": "advance_time", "args": {}},
    {"tool": "pay_bill", "args": {"bill_id": "re-final"}}
-  ]
+  ],
+  "floor_expected": {
+   "P0_noop": "fail",
+   "P1_last_allowed_date": "fail",
+   "P2_greedy": "fail",
+   "P3_pay_all_now": "fail",
+   "P4_newest_document": "fail",
+   "P5_oldest_document": "fail",
+   "P6_open_loop": "fail",
+   "P7_act_on_everything": "fail"
+  }
  }
 }

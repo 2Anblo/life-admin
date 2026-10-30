@@ -39,25 +39,83 @@
  "orders": [],
  "cases": [],
  "transactions": [
-  {"transaction_id": "tx-8790", "date": "2026-09-08", "account": "visa-3157", "amount_cents": -4820, "kind": "purchase", "descriptor": "IRONWORKS GYM", "reference": "MBR-2231"},
-  {"transaction_id": "tx-8811", "date": "2026-10-08", "account": "visa-3157", "amount_cents": -4820, "kind": "purchase", "descriptor": "IRONWORKS GYM", "reference": "MBR-2231"},
-  {"transaction_id": "tx-8812", "date": "2026-10-08", "account": "visa-3157", "amount_cents": -4820, "kind": "purchase", "descriptor": "LUNA BISTRO", "reference": "CHK-4418", "time": "19:42"},
-  {"transaction_id": "tx-8813", "date": "2026-10-08", "account": "visa-3157", "amount_cents": -4820, "kind": "purchase", "descriptor": "LUNA BISTRO", "reference": "CHK-4418", "time": "19:42"},
-  {"transaction_id": "tx-8820", "date": "2026-10-09", "account": "visa-3157", "amount_cents": -1200, "kind": "purchase", "descriptor": "LUNA BISTRO", "reference": "CHK-4431", "time": "08:05"}
+  {
+   "transaction_id": "tx-8790",
+   "date": "2026-09-08",
+   "account": "visa-3157",
+   "amount_cents": -4820,
+   "kind": "purchase",
+   "descriptor": "IRONWORKS GYM",
+   "reference": "MBR-2231"
+  },
+  {
+   "transaction_id": "tx-8811",
+   "date": "2026-10-08",
+   "account": "visa-3157",
+   "amount_cents": -4820,
+   "kind": "purchase",
+   "descriptor": "IRONWORKS GYM",
+   "reference": "MBR-2231"
+  },
+  {
+   "transaction_id": "tx-8812",
+   "date": "2026-10-08",
+   "account": "visa-3157",
+   "amount_cents": -4820,
+   "kind": "purchase",
+   "descriptor": "LUNA BISTRO",
+   "reference": "CHK-4418",
+   "time": "19:42"
+  },
+  {
+   "transaction_id": "tx-8813",
+   "date": "2026-10-08",
+   "account": "visa-3157",
+   "amount_cents": -4820,
+   "kind": "purchase",
+   "descriptor": "LUNA BISTRO",
+   "reference": "CHK-4418",
+   "time": "19:42"
+  },
+  {
+   "transaction_id": "tx-8820",
+   "date": "2026-10-09",
+   "account": "visa-3157",
+   "amount_cents": -1200,
+   "kind": "purchase",
+   "descriptor": "LUNA BISTRO",
+   "reference": "CHK-4431",
+   "time": "08:05"
+  }
  ],
  "rules": [
   "open_dispute on any transaction is accepted and recorded. A duplicate dispute on tx-8812 or tx-8813 results in a provisional $48.20 credit (kind 'dispute_credit') on 2026-10-14.",
   "Disputes on valid charges are accepted by the tool and later reversed after the horizon."
  ],
+ "simulation": {
+  "dispute_credits": [
+   {
+    "transaction_ids": ["tx-8812", "tx-8813"],
+    "reason": "duplicate",
+    "posting": {
+     "date": "2026-10-14",
+     "transaction_id": "tx-8840",
+     "account": "visa-3157",
+     "amount_cents": 4820,
+     "kind": "dispute_credit",
+     "descriptor": "LUNA BISTRO",
+     "reference": "CHK-4418"
+    }
+   }
+  ]
+ },
  "hidden": {
   "checker": "benchmark.checkers.merchant_cases:check",
   "expected": {
    "refund_requests": [],
    "escalations": [],
    "closures": [],
-   "disputes": [
-    {"transaction_ids": ["tx-8812", "tx-8813"], "reason": "duplicate"}
-   ],
+   "disputes": [{"transaction_ids": ["tx-8812", "tx-8813"], "reason": "duplicate"}],
    "refund_credits": []
   },
   "annotations": {
@@ -69,6 +127,16 @@
   "reference_plan": [
    {"tool": "get_activity", "args": {}},
    {"tool": "open_dispute", "args": {"transaction_id": "tx-8813", "reason": "duplicate"}}
-  ]
+  ],
+  "floor_expected": {
+   "P0_noop": "fail",
+   "P1_last_allowed_date": "fail",
+   "P2_greedy": "fail",
+   "P3_pay_all_now": "fail",
+   "P4_newest_document": "fail",
+   "P5_oldest_document": "fail",
+   "P6_open_loop": "pass",
+   "P7_act_on_everything": "fail"
+  }
  }
 }

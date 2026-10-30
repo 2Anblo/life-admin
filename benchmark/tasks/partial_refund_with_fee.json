@@ -38,17 +38,23 @@
    "date": "2026-09-29",
    "items": [
     {"item_id": "M-27Q", "name": "27-inch QHD monitor", "price_cents": 20000},
-    {"item_id": "X-110", "name": "Wireless mouse", "price_cents": 6000}
+    {"item_id": "X-110", "name": "Wireless mouse", "price_cents": 6000, "refund_cents": 5200}
    ],
    "tenders": [{"account": "amex-1009", "amount_cents": 26000}],
-   "returns": [
-    {"rma": "RT-4410", "item_id": "X-110", "status": "received", "received_on": "2026-10-11", "condition": "opened"}
-   ]
+   "returns": [{"rma": "RT-4410", "item_id": "X-110", "status": "received", "received_on": "2026-10-11", "condition": "opened"}]
   }
  ],
  "cases": [],
  "transactions": [
-  {"transaction_id": "tx-7120", "date": "2026-09-29", "account": "amex-1009", "amount_cents": -26000, "kind": "purchase", "descriptor": "PIXELPORT ELEC", "reference": "PP-30918"}
+  {
+   "transaction_id": "tx-7120",
+   "date": "2026-09-29",
+   "account": "amex-1009",
+   "amount_cents": -26000,
+   "kind": "purchase",
+   "descriptor": "PIXELPORT ELEC",
+   "reference": "PP-30918"
+  }
  ],
  "refund_policy": {
   "default_destination": "pixelport-store-credit",
@@ -59,18 +65,24 @@
   "request_refund for M-27Q is declined: the item was not returned.",
   "open_dispute on tx-7120 is accepted and recorded as an unauthorized dispute of a valid fee."
  ],
+ "simulation": {
+  "refunds": {"PP-30918": {"post_after_business_days": 3}}
+ },
  "hidden": {
   "checker": "benchmark.checkers.merchant_cases:check",
   "expected": {
    "refund_requests": [
-    {"order_id": "PP-30918", "items": ["X-110"], "allocations": [{"account": "amex-1009", "amount_cents": 5200}], "by": "2026-10-18"}
+    {
+     "order_id": "PP-30918",
+     "items": ["X-110"],
+     "allocations": [{"account": "amex-1009", "amount_cents": 5200}],
+     "by": "2026-10-18"
+    }
    ],
    "escalations": [],
    "closures": [],
    "disputes": [],
-   "refund_credits": [
-    {"account": "amex-1009", "amount_cents": 5200, "by": "2026-10-22"}
-   ]
+   "refund_credits": [{"account": "amex-1009", "amount_cents": 5200, "by": "2026-10-22"}]
   },
   "annotations": {
    "valid_sources": ["doc-p2r3", "doc-p3f8", "doc-p1i6"],
@@ -79,8 +91,26 @@
    "difficulty": "medium"
   },
   "reference_plan": [
-   {"tool": "request_refund", "args": {"order_id": "PP-30918", "items": ["X-110"], "amount_cents": 5200, "allocations": [{"account": "amex-1009", "amount_cents": 5200}]}},
+   {
+    "tool": "request_refund",
+    "args": {
+     "order_id": "PP-30918",
+     "items": ["X-110"],
+     "amount_cents": 5200,
+     "allocations": [{"account": "amex-1009", "amount_cents": 5200}]
+    }
+   },
    {"tool": "advance_time", "args": {}}
-  ]
+  ],
+  "floor_expected": {
+   "P0_noop": "fail",
+   "P1_last_allowed_date": "fail",
+   "P2_greedy": "fail",
+   "P3_pay_all_now": "fail",
+   "P4_newest_document": "fail",
+   "P5_oldest_document": "fail",
+   "P6_open_loop": "pass",
+   "P7_act_on_everything": "fail"
+  }
  }
 }

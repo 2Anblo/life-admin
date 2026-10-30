@@ -104,7 +104,8 @@
    "P3_pay_all_now": "fail",
    "P4_newest_document": "fail",
    "P5_oldest_document": "fail",
-   "P6_open_loop": "pass"
+   "P6_open_loop": "pass",
+   "P7_act_on_everything": "fail"
   }
  }
 }
