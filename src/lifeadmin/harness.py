@@ -19,7 +19,7 @@ import json
 from copy import deepcopy
 from pathlib import Path
 
-from lifeadmin.agent.tools_v3 import TOOLS, execute_tool
+from lifeadmin.agent.tools_v3 import execute_tool
 from lifeadmin.simulator.workspace_v3 import LifeWorkspace
 
 ENVIRONMENT_RULES = """Environment rules (the same for every task):
@@ -131,32 +131,8 @@ def run_trial(task_path, agent, checker=None) -> dict:
     }
 
 
-def llm_agent(client, model, system_prompt=DEFAULT_SYSTEM_PROMPT, max_steps=20, max_tokens=1024,
-              temperature=None, transcript=None):
-    """A plain observe-act loop over the shared tools (the adaptive tool-using baseline)."""
+def llm_agent(client, model, **settings):
+    """The plain tool-using loop; see lifeadmin.agent.baselines.plain_loop_agent."""
+    from lifeadmin.agent.baselines import plain_loop_agent
 
-    def agent(view, call_tool):
-        messages = [{"role": "user", "content": first_message(view)}]
-        for _ in range(max_steps):
-            request = {"model": model, "max_tokens": max_tokens, "system": system_prompt,
-                       "tools": TOOLS, "messages": messages}
-            if temperature is not None:
-                request["temperature"] = temperature
-            response = client.messages.create(**request)
-            messages.append({"role": "assistant", "content": response.content})
-            if transcript is not None:
-                transcript.append({"stop_reason": response.stop_reason,
-                                   "text": [b.text for b in response.content if b.type == "text"]})
-            if response.stop_reason != "tool_use":
-                return response.stop_reason
-            results = []
-            for block in response.content:
-                if block.type != "tool_use":
-                    continue
-                text, is_error = call_tool(block.name, block.input)
-                results.append({"type": "tool_result", "tool_use_id": block.id,
-                                "content": text, "is_error": is_error})
-            messages.append({"role": "user", "content": results})
-        return "max_steps"
-
-    return agent
+    return plain_loop_agent(client, model, **settings)

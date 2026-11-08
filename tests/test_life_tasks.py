@@ -64,6 +64,34 @@ class LifeTaskTestCase(TaskTestCase):
 
 
 # ----------------------------------------------------------------------
+# Avoid Late Fees (the v1 anchor task, now on the shared harness)
+# ----------------------------------------------------------------------
+
+class AvoidLateFeesTests(LifeTaskTestCase):
+    task_id = "avoid_late_fees"
+
+    def test_traces(self):
+        self.expect([
+            ("C1 pays electric now, schedules the rest after the deposit",
+             steps(pay("electric"), ("schedule_payment", {"bill_id": "internet", "payment_date": "2026-09-27"}),
+                   ("schedule_payment", {"bill_id": "water", "payment_date": "2026-09-28"})), True, []),
+            ("C2 pays electric and water now, internet after the deposit",
+             steps(pay("electric"), pay("water"), ADVANCE, pay("internet")), True, []),
+            ("W1 pays everything now; internet is refused for lack of funds",
+             steps(pay("electric"), pay("internet"), pay("water")), False, ["internet_paid_once_on_time"]),
+            ("W2 schedules internet before the deposit, so it bounces",
+             steps(pay("electric"), ("schedule_payment", {"bill_id": "internet", "payment_date": "2026-09-25"}),
+                   ("schedule_payment", {"bill_id": "water", "payment_date": "2026-09-28"})),
+             False, ["no_failed_payments", "internet_paid_once_on_time"]),
+            ("W3 pays water twice after the deposit, leaving too little for internet",
+             steps(pay("electric"), ADVANCE, pay("water"), pay("water"),
+                   ("schedule_payment", {"bill_id": "internet", "payment_date": "2026-09-27"})),
+             False, ["water_paid_once_on_time", "internet_paid_once_on_time", "no_failed_payments"]),
+            ("W4 no-op", steps(), False, ["electric_paid_once_on_time"]),
+        ])
+
+
+# ----------------------------------------------------------------------
 # Subscriptions
 # ----------------------------------------------------------------------
 
