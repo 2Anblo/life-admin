@@ -1,6 +1,6 @@
 # Design outline
 
-This document records the planned behavior from the project proposal. It is not an implementation status report.
+This document records the planned behavior from the project proposal. The implemented agent is described in [evaluation/README.md](../evaluation/README.md#the-lifeadmin-agent).
 
 ## Simulator and task contract
 

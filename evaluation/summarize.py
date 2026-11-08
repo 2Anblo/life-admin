@@ -188,6 +188,8 @@ def to_latex(summary: dict) -> str:
 
 
 def main():
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")  # Windows consoles default to cp1252
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("out", help="evaluation directory written by run_eval.py")
     parser.add_argument("--baseline", help="agent to compare the others against (paired bootstrap)")

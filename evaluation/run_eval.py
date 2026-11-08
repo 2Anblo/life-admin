@@ -49,14 +49,18 @@ def main():
     load_dotenv()
     parser = argparse.ArgumentParser(description="Run agents on LifeAdmin tasks.")
     parser.add_argument("--agents", nargs="+", required=True,
-                        help="plain_loop, oneshot, reference, P0_noop ... P7_act_on_everything, floors, scripted")
+                        help="plain_loop, oneshot, lifeadmin, lifeadmin_no_validator, pipeline, reference, "
+                             "P0_noop ... P7_act_on_everything, floors, scripted")
     parser.add_argument("--tasks", nargs="+", default=["all"], help="task ids, or 'all' (default)")
     parser.add_argument("--trials", type=int, default=3, help="trials per task for LLM agents (default 3)")
     parser.add_argument("--out", required=True, help="output directory, e.g. results/eval/<name>")
     parser.add_argument("--model", default=os.getenv("TINKER_MODEL"), help="model id (default: $TINKER_MODEL)")
     parser.add_argument("--temperature", type=float, default=DEFAULT_SETTINGS["temperature"])
     parser.add_argument("--max-steps", type=int, default=DEFAULT_SETTINGS["max_steps"])
-    parser.add_argument("--max-tokens", type=int, default=DEFAULT_SETTINGS["max_tokens"])
+    parser.add_argument("--max-tokens", type=int, default=DEFAULT_SETTINGS["max_tokens"],
+                        help="cap per response in step-by-step calls")
+    parser.add_argument("--long-max-tokens", type=int, default=DEFAULT_SETTINGS["long_max_tokens"],
+                        help="cap for one-shot plans and the Reader's ledger")
     parser.add_argument("--max-tool-calls", type=int, default=DEFAULT_SETTINGS["max_tool_calls"])
     parser.add_argument("--workers", type=int, default=1, help="trials to run in parallel (default 1)")
     options = parser.parse_args()
@@ -78,7 +82,8 @@ def main():
         client = Anthropic(api_key=os.environ["TINKER_API_KEY"], base_url=TINKER_BASE_URL, max_retries=0)
 
     settings = {"model": options.model, "temperature": options.temperature, "max_steps": options.max_steps,
-                "max_tokens": options.max_tokens, "max_tool_calls": options.max_tool_calls}
+                "max_tokens": options.max_tokens, "long_max_tokens": options.long_max_tokens,
+                "max_tool_calls": options.max_tool_calls}
     records = run_eval(ROOT / options.out if not Path(options.out).is_absolute() else options.out,
                        agents, task_ids, options.trials, settings, client=client, workers=options.workers)
     scored = [r for r in records if r["status"] == "scored"]

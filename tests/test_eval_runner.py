@@ -177,6 +177,19 @@ class BaselineUnitTests(unittest.TestCase):
             create_with_retry(client, {}, sleep=NO_SLEEP)
         self.assertEqual(client.calls, 1)
 
+    def test_tool_call_without_tools_is_an_empty_answer(self):
+        class Refusing:
+            messages = SimpleNamespace(create=lambda **request: (_ for _ in ()).throw(ToolCallRefused()))
+
+        class ToolCallRefused(Exception):
+            status_code = 422
+
+            def __str__(self):
+                return "model called a tool when tool_choice='none'"
+
+        response, attempts = create_with_retry(Refusing(), {}, sleep=NO_SLEEP)
+        self.assertEqual((response.content, response.stop_reason, attempts), ([], "tool_call_without_tools", 1))
+
     def test_retries_give_up_with_infra_error(self):
         with self.assertRaises(InfraError):
             create_with_retry(FakeClient([], fail_first=100), {}, retries=2, sleep=NO_SLEEP)

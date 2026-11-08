@@ -26,6 +26,7 @@ from pathlib import Path
 
 from benchmark.floor_policies import all_floor_policies, reference_policy
 from lifeadmin.agent.baselines import InfraError, oneshot_agent, plain_loop_agent
+from lifeadmin.agent.lifeadmin_agent import lifeadmin_agent, pipeline_agent
 from lifeadmin.harness import DEFAULT_SYSTEM_PROMPT, run_trial
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -34,14 +35,22 @@ TASK_INDEX = ROOT / "benchmark/task_index.json"
 
 FLOOR_NAMES = ["P0_noop", "P1_last_allowed_date", "P2_greedy", "P3_pay_all_now", "P4_newest_document",
                "P5_oldest_document", "P6_open_loop", "P7_act_on_everything"]
-LLM_AGENTS = {"plain_loop": plain_loop_agent, "oneshot": oneshot_agent}
+LLM_AGENTS = {
+    "plain_loop": plain_loop_agent,
+    "oneshot": oneshot_agent,
+    "lifeadmin": lifeadmin_agent,
+    "lifeadmin_no_validator": lambda client, model, **kw: lifeadmin_agent(client, model, validator=False, **kw),
+    "pipeline": pipeline_agent,
+}
+LOOP_AGENTS = {"plain_loop", "lifeadmin", "lifeadmin_no_validator"}  # take a step cap
 SCRIPTED_AGENTS = ["reference"] + FLOOR_NAMES
 
 DEFAULT_SETTINGS = {
     "model": None,
     "temperature": 0.0,
     "max_steps": 30,
-    "max_tokens": 2048,
+    "max_tokens": 4096,  # per response in step-by-step calls (the model's hidden reasoning counts toward it)
+    "long_max_tokens": 8192,  # single long outputs: a one-shot plan, the Reader's ledger
     "max_tool_calls": 60,
     "system_prompt": DEFAULT_SYSTEM_PROMPT,
 }
@@ -84,11 +93,15 @@ def make_agent(name, task, settings, client, sleep=time.sleep):
     if name in FLOOR_NAMES:
         return all_floor_policies(task)[name], log
     factory = LLM_AGENTS[name]
-    kwargs = {"system_prompt": settings["system_prompt"], "max_tokens": settings["max_tokens"],
+    long_output = name in ("oneshot", "pipeline")
+    kwargs = {"system_prompt": settings["system_prompt"],
+              "max_tokens": settings["long_max_tokens" if long_output else "max_tokens"],
               "temperature": settings["temperature"], "max_tool_calls": settings["max_tool_calls"], "log": log,
               "sleep": sleep}
-    if name == "plain_loop":
+    if name in LOOP_AGENTS:
         kwargs["max_steps"] = settings["max_steps"]
+    if name in ("lifeadmin", "lifeadmin_no_validator"):
+        kwargs["long_max_tokens"] = settings["long_max_tokens"]
     return factory(client, settings["model"], **kwargs), log
 
 
@@ -129,6 +142,7 @@ def run_one(task_id, agent_name, trial, settings, client, infra_retries=2, sleep
             "api_calls": log.get("api_calls", []),
             "agent_text": log.get("text", []),
             "plan": log.get("plan"),
+            "agent_log": {k: v for k, v in log.items() if k not in ("api_calls", "text", "plan")},
             "s_h": result["s_h"],
         })
         break

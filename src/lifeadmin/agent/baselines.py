@@ -17,6 +17,7 @@ errors and are scored as failures.
 import json
 import re
 import time
+from types import SimpleNamespace
 
 from lifeadmin.agent.tools_v3 import TOOLS
 from lifeadmin.harness import DEFAULT_SYSTEM_PROMPT, first_message
@@ -36,12 +37,23 @@ def _is_transient(error: Exception) -> bool:
     return isinstance(status, int) and (status == 429 or status >= 500)
 
 
+def _refused_tool_call(error) -> bool:
+    """Tinker answers 422 when the model calls a tool in a request that offers none: a bad model output."""
+    return getattr(error, "status_code", None) == 422 and "called a tool" in str(error)
+
+
 def create_with_retry(client, request: dict, retries: int = 4, sleep=time.sleep):
-    """Call the API; retry transient failures with exponential backoff. Returns (response, attempts)."""
+    """Call the API; retry transient failures with exponential backoff. Returns (response, attempts).
+
+    A tool call in a request without tools comes back as an empty response with stop reason
+    ``tool_call_without_tools``, so the caller scores it like any other unusable answer.
+    """
     for attempt in range(1, retries + 2):
         try:
             return client.messages.create(**request), attempt
         except Exception as error:  # noqa: BLE001 - classify any SDK error
+            if _refused_tool_call(error):
+                return SimpleNamespace(content=[], stop_reason="tool_call_without_tools", usage=None), attempt
             if not _is_transient(error):
                 raise
             if attempt > retries:
@@ -49,7 +61,7 @@ def create_with_retry(client, request: dict, retries: int = 4, sleep=time.sleep)
             sleep(min(2 ** attempt, 30))
 
 
-def _record(log, response, started, attempts):
+def _record(log, response, started, attempts, role=None):
     usage = getattr(response, "usage", None)
     # Tinker reports prompt tokens under the cache fields (input_tokens is 0), so count all three.
     parts = [getattr(usage, f, None) for f in ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens")]
@@ -60,9 +72,10 @@ def _record(log, response, started, attempts):
         "output_tokens": getattr(usage, "output_tokens", None),
         "latency_s": round(time.monotonic() - started, 3),
         "attempts": attempts,
+        **({"role": role} if role else {}),
     })
     text = [block.text for block in response.content if block.type == "text"]
-    if text:
+    if text and role in (None, "planner"):
         log.setdefault("text", []).append("\n".join(text))
 
 
@@ -76,7 +89,7 @@ def _request(model, max_tokens, system, messages, temperature, tools=None):
     return request
 
 
-def plain_loop_agent(client, model, system_prompt=DEFAULT_SYSTEM_PROMPT, max_steps=30, max_tokens=2048,
+def plain_loop_agent(client, model, system_prompt=DEFAULT_SYSTEM_PROMPT, max_steps=30, max_tokens=4096,
                      temperature=None, max_tool_calls=60, log=None, retries=4, sleep=time.sleep, transcript=None):
     """Observe-act loop: one API call per step, every tool call's result returned to the model.
 
@@ -149,7 +162,7 @@ def parse_plan(text: str):
     return [{"tool": s["tool"], "args": s.get("args") or {}} for s in plan]
 
 
-def oneshot_agent(client, model, system_prompt=DEFAULT_SYSTEM_PROMPT, max_tokens=4096, temperature=None,
+def oneshot_agent(client, model, system_prompt=DEFAULT_SYSTEM_PROMPT, max_tokens=8192, temperature=None,
                   max_tool_calls=60, log=None, retries=4, sleep=time.sleep):
     """Read everything available at the start, ask for one plan, execute it blind."""
     log = log if log is not None else {}
