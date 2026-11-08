@@ -22,7 +22,7 @@ uv run python evaluation/run_eval.py --agents scripted --out results/eval/script
 uv run python evaluation/summarize.py results/eval/scripted
 ```
 
-LLM baselines use Tinker's Anthropic-compatible endpoint:
+LLM baselines use Tinker's Anthropic-compatible endpoint. `run_eval.py` reads `TINKER_API_KEY` and `TINKER_MODEL` from the environment or from a `.env` file at the repository root (ignored by Git); the environment wins if both are set:
 
 ```powershell
 $env:TINKER_API_KEY = "your-key"

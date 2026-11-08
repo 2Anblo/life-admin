@@ -51,9 +51,12 @@ def create_with_retry(client, request: dict, retries: int = 4, sleep=time.sleep)
 
 def _record(log, response, started, attempts):
     usage = getattr(response, "usage", None)
+    # Tinker reports prompt tokens under the cache fields (input_tokens is 0), so count all three.
+    parts = [getattr(usage, f, None) for f in ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens")]
     log.setdefault("api_calls", []).append({
         "stop_reason": response.stop_reason,
-        "input_tokens": getattr(usage, "input_tokens", None),
+        "input_tokens": sum(p for p in parts if isinstance(p, int)) if any(isinstance(p, int) for p in parts) else None,
+        "cache_read_input_tokens": parts[2] if isinstance(parts[2], int) else None,
         "output_tokens": getattr(usage, "output_tokens", None),
         "latency_s": round(time.monotonic() - started, 3),
         "attempts": attempts,
@@ -68,7 +71,8 @@ def _request(model, max_tokens, system, messages, temperature, tools=None):
     if tools is not None:
         request["tools"] = tools
     if temperature is not None:
-        request["temperature"] = temperature
+        # anthropic>=1.8 dropped `temperature` from create(); send it in the body for Tinker's endpoint.
+        request["extra_body"] = {"temperature": temperature}
     return request
 
 

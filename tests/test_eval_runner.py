@@ -1,11 +1,14 @@
 """Tests for the evaluation runner, the LLM baselines and the summary, with a fake model client."""
 
+import inspect
 import json
 import sys
 import tempfile
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
+
+from anthropic.resources.messages import Messages
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
@@ -16,6 +19,9 @@ from evaluation.summarize import load_records, summarize, to_latex, to_markdown 
 from lifeadmin.agent.baselines import InfraError, create_with_retry, parse_plan  # noqa: E402
 
 NO_SLEEP = lambda seconds: None  # noqa: E731
+
+# The fake client accepts only what the installed SDK's Messages.create() accepts.
+SDK_CREATE_PARAMS = set(inspect.signature(Messages.create).parameters) - {"self"}
 
 
 def load(task_id):
@@ -32,7 +38,8 @@ def tool_block(n, name, args):
 
 def response(blocks, stop_reason):
     return SimpleNamespace(content=blocks, stop_reason=stop_reason,
-                           usage=SimpleNamespace(input_tokens=100, output_tokens=20))
+                           usage=SimpleNamespace(input_tokens=0, cache_creation_input_tokens=60,
+                                                 cache_read_input_tokens=40, output_tokens=20))
 
 
 class RateLimitError(Exception):
@@ -53,6 +60,9 @@ class FakeClient:
 
     def create(self, **request):
         self.calls += 1
+        unknown = set(request) - SDK_CREATE_PARAMS
+        if unknown:
+            raise TypeError(f"Messages.create() got unexpected keyword arguments {sorted(unknown)}")
         if self.calls <= self.fail_first:
             raise RateLimitError("slow down")
         if "tools" not in request:

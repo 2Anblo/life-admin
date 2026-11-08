@@ -3,7 +3,7 @@
     # scripted bounds: the reference plan and all floor policies, every task (no API key needed)
     python evaluation/run_eval.py --agents scripted --out results/eval/scripted
 
-    # LLM baselines, 3 trials per task (needs TINKER_API_KEY)
+    # LLM baselines, 3 trials per task (needs TINKER_API_KEY, from the environment or .env)
     python evaluation/run_eval.py --agents plain_loop oneshot --trials 3 \\
         --model thinkingmachines/Inkling-Small --out results/eval/inkling-small
 
@@ -30,7 +30,23 @@ from evaluation.runner import DEFAULT_SETTINGS, all_task_ids, expand_agents, is_
 TINKER_BASE_URL = "https://tinker.thinkingmachines.dev/services/tinker-prod/anthropic/api"
 
 
+def load_dotenv(path: Path = ROOT / ".env") -> None:
+    """Read KEY=value lines from the repository's .env. Variables already set in the environment win."""
+    if not path.exists():
+        return
+    for line in path.read_text(encoding="utf-8-sig").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.removeprefix("export ").split("=", 1)
+        key, value = key.strip(), value.strip()
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in "'\"":
+            value = value[1:-1]
+        os.environ.setdefault(key, value)
+
+
 def main():
+    load_dotenv()
     parser = argparse.ArgumentParser(description="Run agents on LifeAdmin tasks.")
     parser.add_argument("--agents", nargs="+", required=True,
                         help="plain_loop, oneshot, reference, P0_noop ... P7_act_on_everything, floors, scripted")
