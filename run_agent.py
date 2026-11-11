@@ -1,4 +1,4 @@
-"""Run the first task with a Tinker model via its Anthropic-compatible API."""
+"""Run the v1 Avoid Late Fees fixture (benchmark/legacy) with a Tinker model. For the benchmark, use evaluation/run_eval.py."""
 
 import json
 import os
@@ -13,7 +13,7 @@ from lifeadmin.agent.runner import run_agent
 from lifeadmin.simulator.workspace import Workspace
 
 
-TASK_PATH = Path(__file__).parent / "benchmark/tasks/avoid_late_fees.json"
+TASK_PATH = Path(__file__).parent / "benchmark/legacy/avoid_late_fees_v1.json"
 TINKER_BASE_URL = "https://tinker.thinkingmachines.dev/services/tinker-prod/anthropic/api"
 RUNS_DIR = Path(__file__).parent / "results/runs"
 

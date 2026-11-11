@@ -1,22 +1,86 @@
 {
-  "id": "avoid_late_fees",
-  "title": "Pay three bills around an incoming deposit",
-  "start_date": "2026-09-24",
-  "horizon": "2026-09-28",
-  "initial_balance_cents": 12000,
-  "documents": [
-    {"id": "bill-electric", "text": "Electric bill: $60.00 due September 25, 2026."},
-    {"id": "bill-internet", "text": "Internet bill: $80.00 due September 27, 2026."},
-    {"id": "bill-water", "text": "Water bill: $50.00 due September 28, 2026."},
-    {"id": "deposit-notice", "text": "A $100.00 deposit will arrive September 26, 2026."}
+ "schema_version": 3,
+ "id": "avoid_late_fees",
+ "title": "Pay three bills around an incoming deposit",
+ "instruction": "Please pay my electric, internet and water bills so that none of them is late. Don't let my account go negative, and don't pay anything twice.",
+ "start_date": "2026-09-24",
+ "horizon": "2026-09-28",
+ "initial_balance_cents": 12000,
+ "accounts": [
+  {"id": "checking", "label": "Checking account", "kind": "checking"}
+ ],
+ "documents": [
+  {
+   "id": "bill-electric",
+   "title": "Electric bill",
+   "text": "Electric bill: $60.00 due September 25, 2026.",
+   "release_date": null
+  },
+  {
+   "id": "bill-internet",
+   "title": "Internet bill",
+   "text": "Internet bill: $80.00 due September 27, 2026.",
+   "release_date": null
+  },
+  {
+   "id": "bill-water",
+   "title": "Water bill",
+   "text": "Water bill: $50.00 due September 28, 2026.",
+   "release_date": null
+  },
+  {
+   "id": "deposit-notice",
+   "title": "Deposit notice",
+   "text": "A $100.00 deposit will arrive September 26, 2026.",
+   "release_date": null
+  }
+ ],
+ "bills": [
+  {
+   "id": "electric",
+   "payee": "Electric company",
+   "amount_cents": 6000,
+   "due_date": "2026-09-25",
+   "document_id": "bill-electric"
+  },
+  {
+   "id": "internet",
+   "payee": "Internet provider",
+   "amount_cents": 8000,
+   "due_date": "2026-09-27",
+   "document_id": "bill-internet"
+  },
+  {"id": "water", "payee": "Water utility", "amount_cents": 5000, "due_date": "2026-09-28", "document_id": "bill-water"}
+ ],
+ "events": [
+  {"id": "paycheck", "date": "2026-09-26", "type": "deposit", "amount_cents": 10000}
+ ],
+ "rules": [
+  "The v1 version of this task is benchmark/legacy/avoid_late_fees_v1.json and runs on the v1 simulator.",
+  "The $120.00 balance cannot cover all three bills ($190.00) before the $100.00 deposit on 2026-09-26, so at least one of the internet and water bills must be paid on or after that date and by its due date."
+ ],
+ "hidden": {
+  "checker": "benchmark.checkers.bill_payment:check",
+  "goal": "Every bill settles by its due date, with no overdraft or duplicate payment.",
+  "annotations": {
+   "difficulty_factors": ["B"],
+   "difficulty": "easy",
+   "floor_note": "A calibration task: P1, P2, P4, P5 and P6 solve it, so it does not meet the rule that every task defeats all floor policies. Kept as the easy anchor task from the proposal."
+  },
+  "reference_plan": [
+   {"tool": "pay_bill", "args": {"bill_id": "electric"}},
+   {"tool": "schedule_payment", "args": {"bill_id": "internet", "payment_date": "2026-09-27"}},
+   {"tool": "schedule_payment", "args": {"bill_id": "water", "payment_date": "2026-09-28"}}
   ],
-  "bills": [
-    {"id": "electric", "amount_cents": 6000, "due_date": "2026-09-25", "document_id": "bill-electric"},
-    {"id": "internet", "amount_cents": 8000, "due_date": "2026-09-27", "document_id": "bill-internet"},
-    {"id": "water", "amount_cents": 5000, "due_date": "2026-09-28", "document_id": "bill-water"}
-  ],
-  "events": [
-    {"id": "paycheck", "date": "2026-09-26", "type": "deposit", "amount_cents": 10000}
-  ],
-  "goal": "Every bill settles by its due date, with no overdraft or duplicate payment."
+  "floor_expected": {
+   "P0_noop": "fail",
+   "P1_last_allowed_date": "pass",
+   "P2_greedy": "pass",
+   "P3_pay_all_now": "fail",
+   "P4_newest_document": "pass",
+   "P5_oldest_document": "pass",
+   "P6_open_loop": "pass",
+   "P7_act_on_everything": "fail"
+  }
+ }
 }

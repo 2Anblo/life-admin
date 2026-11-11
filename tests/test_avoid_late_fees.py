@@ -14,7 +14,7 @@ from lifeadmin.simulator.workspace import Workspace
 
 class AvoidLateFeesTests(unittest.TestCase):
     def setUp(self):
-        self.task = json.loads((ROOT / "benchmark/tasks/avoid_late_fees.json").read_text())
+        self.task = json.loads((ROOT / "benchmark/legacy/avoid_late_fees_v1.json").read_text())
         self.workspace = Workspace(self.task)
 
     def test_successful_schedule(self):

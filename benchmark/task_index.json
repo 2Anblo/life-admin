@@ -1,0 +1,25 @@
+{
+ "note": "Task numbers, categories, difficulty factors and labels, as in Table 1 of the benchmark paper. Factors: C conflicting evidence, B budget, T timed information, D action dependency, K calculation, E exclusion.",
+ "tasks": [
+  {"number": 1, "id": "avoid_late_fees", "title": "Avoid Late Fees", "category": "Payments", "factors": ["B"], "difficulty": "Easy"},
+  {"number": 2, "id": "batch_recovery", "title": "Batch Recovery", "category": "Payments", "factors": ["C", "B", "D", "K"], "difficulty": "Hard"},
+  {"number": 3, "id": "conflicting_notices", "title": "Conflicting Notices", "category": "Payments", "factors": ["C", "B", "K"], "difficulty": "Hard"},
+  {"number": 4, "id": "duplicate_invoice", "title": "Duplicate Invoice", "category": "Payments", "factors": ["C", "E"], "difficulty": "Medium"},
+  {"number": 5, "id": "replace_schedule", "title": "Replace Schedule", "category": "Payments", "factors": ["C", "T", "D"], "difficulty": "Hard"},
+  {"number": 6, "id": "schedule_window", "title": "Schedule Window", "category": "Payments", "factors": ["B", "K"], "difficulty": "Medium"},
+  {"number": 7, "id": "cancel_unused_subscriptions", "title": "Cancel Unused Subscriptions", "category": "Subscriptions", "factors": ["K", "E"], "difficulty": "Medium"},
+  {"number": 8, "id": "free_trial_conversion", "title": "Free Trial Conversion", "category": "Subscriptions", "factors": ["K", "E"], "difficulty": "Medium"},
+  {"number": 9, "id": "price_increase_review", "title": "Price Increase Review", "category": "Subscriptions", "factors": ["K", "E"], "difficulty": "Medium"},
+  {"number": 10, "id": "downgrade_by_usage", "title": "Downgrade by Usage", "category": "Subscriptions", "factors": ["K", "E"], "difficulty": "Medium"},
+  {"number": 11, "id": "refund_within_return_window", "title": "Refund Only What Was Returned", "category": "Refunds", "factors": ["E"], "difficulty": "Easy"},
+  {"number": 12, "id": "refund_descriptor_reconciliation", "title": "Reconcile Two Refund Cases", "category": "Refunds", "factors": ["C", "E"], "difficulty": "Medium"},
+  {"number": 13, "id": "partial_refund_with_fee", "title": "Partial Refund with Fee", "category": "Refunds", "factors": ["K", "E"], "difficulty": "Medium"},
+  {"number": 14, "id": "split_tender_refund", "title": "Split-Tender Refund", "category": "Refunds", "factors": ["C", "T", "D", "K"], "difficulty": "Hard"},
+  {"number": 15, "id": "missing_refund_escalation", "title": "Escalate Only the Late Refund", "category": "Refunds", "factors": ["C", "T", "D", "E"], "difficulty": "Hard"},
+  {"number": 16, "id": "credit_card_statement_balance", "title": "Statement Balance", "category": "Payments", "factors": ["K"], "difficulty": "Easy"},
+  {"number": 17, "id": "duplicate_charge_dispute", "title": "Duplicate Charge Dispute", "category": "Disputes", "factors": ["E"], "difficulty": "Easy"},
+  {"number": 18, "id": "renewal_reminders", "title": "Renewal Reminders", "category": "Reminders", "factors": ["K", "E"], "difficulty": "Medium"},
+  {"number": 19, "id": "move_out_closeout", "title": "Move-Out Close-Out", "category": "Cross-category", "factors": ["T", "D", "K", "E"], "difficulty": "Hard"},
+  {"number": 20, "id": "loan_payoff_cleanup", "title": "Loan Payoff Cleanup", "category": "Payments", "factors": ["E"], "difficulty": "Easy"}
+ ]
+}
